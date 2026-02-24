@@ -1,4 +1,4 @@
-baseURL: "https://atsushiyanaigsawa768.github.io/"
+baseURL: "https://atsushiyanaigsawa768.github.io/mysite/"
 title: "Atsushi Yanagisawa"
 theme: "PaperMod"
 pagination:
@@ -49,23 +49,23 @@ languages:
       main:
         - identifier: publications
           name: Publications
-          pageRef: /publications/
+          url: /publications/
           weight: 10
         - identifier: experience
           name: Experience
-          pageRef: /experience/
+          url: /experience/
           weight: 20
         - identifier: projects
           name: Projects
-          pageRef: /projects/
+          url: /projects/
           weight: 30
         - identifier: awards
           name: Awards
-          pageRef: /awards/
+          url: /awards/
           weight: 40
         - identifier: search
           name: Search
-          pageRef: /search/
+          url: /search/
           weight: 50
 
   ja:
@@ -94,23 +94,23 @@ languages:
       main:
         - identifier: publications
           name: 論文
-          pageRef: /publications/
+          url: /publications/
           weight: 10
         - identifier: experience
           name: 経歴
-          pageRef: /experience/
+          url: /experience/
           weight: 20
         - identifier: projects
           name: プロジェクト
-          pageRef: /projects/
+          url: /projects/
           weight: 30
         - identifier: awards
           name: 受賞歴
-          pageRef: /awards/
+          url: /awards/
           weight: 40
         - identifier: search
           name: 検索
-          pageRef: /search/
+          url: /search/
           weight: 50
 
 params:
