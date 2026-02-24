@@ -49,23 +49,23 @@ languages:
       main:
         - identifier: publications
           name: Publications
-          url: /publications/
+          pageRef: /publications/
           weight: 10
         - identifier: experience
           name: Experience
-          url: /experience/
+          pageRef: /experience/
           weight: 20
         - identifier: projects
           name: Projects
-          url: /projects/
+          pageRef: /projects/
           weight: 30
         - identifier: awards
           name: Awards
-          url: /awards/
+          pageRef: /awards/
           weight: 40
         - identifier: search
           name: Search
-          url: /search/
+          pageRef: /search/
           weight: 50
 
   ja:
@@ -94,23 +94,23 @@ languages:
       main:
         - identifier: publications
           name: 論文
-          url: /publications/
+          pageRef: /publications/
           weight: 10
         - identifier: experience
           name: 経歴
-          url: /experience/
+          pageRef: /experience/
           weight: 20
         - identifier: projects
           name: プロジェクト
-          url: /projects/
+          pageRef: /projects/
           weight: 30
         - identifier: awards
           name: 受賞歴
-          url: /awards/
+          pageRef: /awards/
           weight: 40
         - identifier: search
           name: 検索
-          url: /search/
+          pageRef: /search/
           weight: 50
 
 params:

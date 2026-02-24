@@ -2,100 +2,100 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:59654/ja/categories/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/categories/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/categories/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/categories/"
                 />
   </url><url>
-    <loc>http://localhost:59654/ja/tags/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/tags/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/tags/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/tags/"
                 />
   </url><url>
-    <loc>http://localhost:59654/ja/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/"
                 />
   </url><url>
-    <loc>http://localhost:59654/ja/projects/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/projects/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/projects/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/projects/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/projects/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/projects/"
                 />
   </url><url>
-    <loc>http://localhost:59654/ja/experience/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/experience/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/experience/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/experience/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/experience/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/experience/"
                 />
   </url><url>
-    <loc>http://localhost:59654/ja/search/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/search/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/search/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/search/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/search/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/search/"
                 />
   </url><url>
-    <loc>http://localhost:59654/ja/awards/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/awards/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/awards/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/awards/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/awards/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/awards/"
                 />
   </url><url>
-    <loc>http://localhost:59654/ja/publications/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/ja/publications/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:59654/en/publications/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/publications/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:59654/ja/publications/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/publications/"
                 />
   </url>
 </urlset>

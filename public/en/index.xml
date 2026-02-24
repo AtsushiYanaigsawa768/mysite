@@ -2,37 +2,37 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Home on Atsushi Yanagisawa</title>
-    <link>http://localhost:59654/en/</link>
+    <link>https://atsushiyanaigsawa768.github.io/mysite/en/</link>
     <description>Recent content in Home on Atsushi Yanagisawa</description>
     <generator>Hugo -- 0.156.0</generator>
     <language>en</language>
-    <atom:link href="http://localhost:59654/en/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://atsushiyanaigsawa768.github.io/mysite/en/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Awards &amp; Honors</title>
-      <link>http://localhost:59654/en/awards/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/awards/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/en/awards/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/awards/</guid>
       <description>Awards and honors</description>
     </item>
     <item>
       <title>Experience</title>
-      <link>http://localhost:59654/en/experience/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/experience/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/en/experience/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/experience/</guid>
       <description>Research experience and education</description>
     </item>
     <item>
       <title>Projects</title>
-      <link>http://localhost:59654/en/projects/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/projects/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/en/projects/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/projects/</guid>
       <description>Selected projects</description>
     </item>
     <item>
       <title>Publications</title>
-      <link>http://localhost:59654/en/publications/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/publications/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/en/publications/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/publications/</guid>
       <description>List of publications</description>
     </item>
   </channel>

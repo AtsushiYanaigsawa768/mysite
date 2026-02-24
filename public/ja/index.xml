@@ -2,37 +2,37 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>ホーム on 栁澤篤</title>
-    <link>http://localhost:59654/ja/</link>
+    <link>https://atsushiyanaigsawa768.github.io/mysite/ja/</link>
     <description>Recent content in ホーム on 栁澤篤</description>
     <generator>Hugo -- 0.156.0</generator>
     <language>ja</language>
-    <atom:link href="http://localhost:59654/ja/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://atsushiyanaigsawa768.github.io/mysite/ja/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>プロジェクト</title>
-      <link>http://localhost:59654/ja/projects/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/projects/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/ja/projects/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/projects/</guid>
       <description>主なプロジェクト</description>
     </item>
     <item>
       <title>経歴</title>
-      <link>http://localhost:59654/ja/experience/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/experience/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/ja/experience/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/experience/</guid>
       <description>研究経歴・学歴</description>
     </item>
     <item>
       <title>受賞歴</title>
-      <link>http://localhost:59654/ja/awards/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/awards/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/ja/awards/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/awards/</guid>
       <description>受賞歴</description>
     </item>
     <item>
       <title>論文</title>
-      <link>http://localhost:59654/ja/publications/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/publications/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:59654/ja/publications/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/publications/</guid>
       <description>論文一覧</description>
     </item>
   </channel>
