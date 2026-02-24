@@ -1,0 +1,167 @@
+baseURL: "/"
+title: "Atsushi Yanagisawa"
+theme: "PaperMod"
+paginate: 10
+defaultContentLanguage: en
+defaultContentLanguageInSubdir: true
+
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+languages:
+  en:
+    contentDir: content/en
+    languageName: "English"
+    weight: 1
+    title: "Atsushi Yanagisawa"
+    params:
+      profileMode:
+        enabled: true
+        title: "Atsushi Yanagisawa"
+        subtitle: |
+          Undergraduate Student, Kyoto University
+          Faculty of Engineering, Dept. of Informatics, Mathematical Engineering Course
+
+          **Interests:** Optimization / Large Language Models / Machine Learning
+        buttons:
+          - name: Publications
+            url: publications/
+          - name: Experience
+            url: experience/
+          - name: Projects
+            url: projects/
+          - name: Awards
+            url: awards/
+    menu:
+      main:
+        - identifier: publications
+          name: Publications
+          pageRef: /publications/
+          weight: 10
+        - identifier: experience
+          name: Experience
+          pageRef: /experience/
+          weight: 20
+        - identifier: projects
+          name: Projects
+          pageRef: /projects/
+          weight: 30
+        - identifier: awards
+          name: Awards
+          pageRef: /awards/
+          weight: 40
+        - identifier: search
+          name: Search
+          pageRef: /search/
+          weight: 50
+
+  ja:
+    contentDir: content/ja
+    languageName: "日本語"
+    weight: 2
+    title: "栁澤篤"
+    params:
+      profileMode:
+        enabled: true
+        title: "栁澤篤"
+        subtitle: |
+          京都大学 工学部 情報学科 数理工学コース
+
+          **研究分野:** 最適化 / 大規模言語モデル / 機械学習
+        buttons:
+          - name: 論文
+            url: publications/
+          - name: 経歴
+            url: experience/
+          - name: プロジェクト
+            url: projects/
+          - name: 受賞歴
+            url: awards/
+    menu:
+      main:
+        - identifier: publications
+          name: 論文
+          pageRef: /publications/
+          weight: 10
+        - identifier: experience
+          name: 経歴
+          pageRef: /experience/
+          weight: 20
+        - identifier: projects
+          name: プロジェクト
+          pageRef: /projects/
+          weight: 30
+        - identifier: awards
+          name: 受賞歴
+          pageRef: /awards/
+          weight: 40
+        - identifier: search
+          name: 検索
+          pageRef: /search/
+          weight: 50
+
+params:
+  env: production
+  description: "Personal website of Atsushi Yanagisawa - Researcher at Kyoto University"
+  author: "Atsushi Yanagisawa"
+
+  defaultTheme: auto
+  disableThemeToggle: false
+  ShowReadingTime: false
+  ShowShareButtons: false
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  ShowWordCount: false
+  ShowRssButtonInSectionTermList: false
+  UseHugoToc: true
+  disableSpecial1stPost: true
+  disableScrollToTop: false
+  hidemeta: false
+  hideSummary: false
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/AtsushiYanaigsawa768"
+    - name: x
+      url: "https://x.com/WillowSwamp427"
+    - name: linkedin
+      url: "https://www.linkedin.com/in/atsushi-yanagisawa-a40365310/"
+    - name: huggingface
+      url: "https://huggingface.co/Yana"
+      title: "Hugging Face"
+
+  assets:
+    disableHLJS: true
+
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    keys:
+      - title
+      - permalink
+      - summary
+      - content
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
