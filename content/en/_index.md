@@ -54,7 +54,7 @@ layout: "home"
 
 <div class="news-item">
 <div class="news-date">2025.04</div>
-<div class="news-text"><span class="news-badge">Position</span> Teaching Assistant at <a href="https://llmc.nii.ac.jp/en/">NII LLMC</a></div>
+<div class="news-text"><span class="news-badge">Position</span> Technical Staff at <a href="https://llmc.nii.ac.jp/en/">NII LLMC</a></div>
 </div>
 
 <div class="news-item">
@@ -64,7 +64,7 @@ layout: "home"
 
 <div class="news-item">
 <div class="news-date">2024.04</div>
-<div class="news-text"><span class="news-badge">Education</span> Entered Mathematical Engineering Course, Dept. of Informatics, Kyoto University</div>
+<div class="news-text"><span class="news-badge">Education</span> Entered Applied Mathematics and Physics, Undergraduate School of Informatics and Mathematical Science, Kyoto University</div>
 </div>
 
 <div class="news-item">
@@ -74,7 +74,7 @@ layout: "home"
 
 <div class="news-item">
 <div class="news-date">2023.04</div>
-<div class="news-text"><span class="news-badge">Education</span> Enrolled in Faculty of Engineering, Dept. of Informatics, Kyoto University</div>
+<div class="news-text"><span class="news-badge">Education</span> Enrolled in Undergraduate School of Informatics and Mathematical Science, Kyoto University</div>
 </div>
 
 <div class="news-item">

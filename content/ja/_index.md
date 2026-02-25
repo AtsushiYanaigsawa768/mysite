@@ -54,7 +54,7 @@ layout: "home"
 
 <div class="news-item">
 <div class="news-date">2025.04</div>
-<div class="news-text"><span class="news-badge">職位</span> <a href="https://llmc.nii.ac.jp/">NII LLMC</a> ティーチングアシスタント</div>
+<div class="news-text"><span class="news-badge">職位</span> <a href="https://llmc.nii.ac.jp/">NII LLMC</a> 技術補佐員</div>
 </div>
 
 <div class="news-item">
@@ -64,7 +64,7 @@ layout: "home"
 
 <div class="news-item">
 <div class="news-date">2024.04</div>
-<div class="news-text"><span class="news-badge">学歴</span> 京都大学 工学部 情報学科 数理工学コースに進級</div>
+<div class="news-text"><span class="news-badge">学歴</span> 京都大学 情報学科 数理工学コースに進級</div>
 </div>
 
 <div class="news-item">
@@ -74,7 +74,7 @@ layout: "home"
 
 <div class="news-item">
 <div class="news-date">2023.04</div>
-<div class="news-text"><span class="news-badge">学歴</span> 京都大学 工学部 情報学科に入学</div>
+<div class="news-text"><span class="news-badge">学歴</span> 京都大学 情報学科に入学</div>
 </div>
 
 <div class="news-item">

@@ -21,8 +21,8 @@ TocOpen: true
 <div class="timeline-item">
 <div class="timeline-date">2025.04 - Present</div>
 <div class="timeline-content">
-<h3>Teaching Assistant, <a href="https://llmc.nii.ac.jp/en/">NII LLMC</a></h3>
-<p>Teaching Assistant for the NII Large Language Model Cross-institutional Collaboration (LLMC) program at the National Institute of Informatics.</p>
+<h3>Technical Staff, <a href="https://llmc.nii.ac.jp/en/">NII LLMC</a></h3>
+<p>Technical Staff for the NII Large Language Model Cross-institutional Collaboration (LLMC) program at the National Institute of Informatics.</p>
 </div>
 </div>
 
@@ -53,16 +53,16 @@ TocOpen: true
 <div class="timeline-item">
 <div class="timeline-date">2024.04 - Present</div>
 <div class="timeline-content">
-<h3>Kyoto University, Mathematical Engineering Course</h3>
-<p>Faculty of Engineering, Department of Informatics, Mathematical Engineering Course.</p>
+<h3>Kyoto University, Applied Mathematics and Physics</h3>
+<p>Undergraduate School of Informatics and Mathematical Science, Applied Mathematics and Physics.</p>
 </div>
 </div>
 
 <div class="timeline-item">
 <div class="timeline-date">2023.04 - Present</div>
 <div class="timeline-content">
-<h3>Kyoto University, Faculty of Engineering</h3>
-<p>Enrolled in the Department of Informatics, Faculty of Engineering, Kyoto University.</p>
+<h3>Kyoto University, Undergraduate School of Informatics and Mathematical Science</h3>
+<p>Enrolled in the Undergraduate School of Informatics and Mathematical Science, Kyoto University.</p>
 </div>
 </div>
 

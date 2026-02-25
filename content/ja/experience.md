@@ -21,8 +21,8 @@ TocOpen: true
 <div class="timeline-item">
 <div class="timeline-date">2025.04 - 現在</div>
 <div class="timeline-content">
-<h3>ティーチングアシスタント, <a href="https://llmc.nii.ac.jp/">NII 大規模言語モデル研究開発センター (LLMC)</a></h3>
-<p>国立情報学研究所（NII）大規模言語モデル研究開発センター（LLMC）にてティーチングアシスタントとして従事。</p>
+<h3>技術補佐員, <a href="https://llmc.nii.ac.jp/">NII 大規模言語モデル研究開発センター (LLMC)</a></h3>
+<p>国立情報学研究所（NII）大規模言語モデル研究開発センター（LLMC）にて技術補佐員として従事。</p>
 </div>
 </div>
 
@@ -53,15 +53,15 @@ TocOpen: true
 <div class="timeline-item">
 <div class="timeline-date">2024.04 - 現在</div>
 <div class="timeline-content">
-<h3>京都大学 工学部 情報学科 数理工学コース</h3>
+<h3>京都大学 情報学科 数理工学コース</h3>
 </div>
 </div>
 
 <div class="timeline-item">
 <div class="timeline-date">2023.04 - 現在</div>
 <div class="timeline-content">
-<h3>京都大学 工学部 情報学科</h3>
-<p>京都大学工学部情報学科に入学。</p>
+<h3>京都大学 情報学科</h3>
+<p>京都大学情報学科に入学。</p>
 </div>
 </div>
 
