@@ -1,2 +1,25 @@
-{{- /* Custom head extensions for HuggingFace icon workaround */ -}}
-{{- /* PaperMod does not have a built-in HuggingFace icon, so we use googlescholar slot with a title override */ -}}
+{{- /* SEO: JSON-LD structured data for Person */ -}}
+{{- if .IsHome }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Atsushi Yanagisawa",
+  "alternateName": ["栁澤篤", "柳澤篤", "やなぎさわあつし"],
+  "url": "https://atsushiyanaigsawa768.github.io/mysite/",
+  "jobTitle": "Undergraduate Student",
+  "affiliation": {
+    "@type": "Organization",
+    "name": "Kyoto University",
+    "url": "https://www.kyoto-u.ac.jp/"
+  },
+  "sameAs": [
+    "https://github.com/AtsushiYanaigsawa768",
+    "https://x.com/WillowSwamp427",
+    "https://www.linkedin.com/in/atsushi-yanagisawa-a40365310/",
+    "https://huggingface.co/Yana"
+  ],
+  "knowsAbout": ["Optimization", "Large Language Models", "Machine Learning", "Gaussian Process", "System Identification"]
+}
+</script>
+{{- end }}

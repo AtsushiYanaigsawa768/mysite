@@ -20,21 +20,21 @@ ShowToc: false
 <h3>Virtual Data Generation</h3>
 <p>加速度センサデータを用いたOpenPack Challengeのための合成データ生成。データ拡張技術と補間アルゴリズムを組み合わせた手法。<strong>ABC2025 Competition 優勝。</strong></p>
 <span class="pub-tag">データ拡張</span> <span class="pub-tag">行動認識</span>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Virtual_Data_Generation">GitHub</a> | <a href="https://www.jstage.jst.go.jp/article/ijabc/2025/2/2025_107/_article/-char/en/">論文</a> | <a href="/slides/ABC2025_Virtual_Data_Generation.pdf">スライド</a></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Virtual_Data_Generation">GitHub</a> | <a href="https://www.jstage.jst.go.jp/article/ijabc/2025/2/2025_107/_article/-char/en/">論文</a> | <a href="/mysite/slides/ABC2025_Virtual_Data_Generation.pdf">スライド</a></div>
 </div>
 
 <div class="project-card">
 <h3>Easy-CBS</h3>
 <p>マルチエージェント経路計画のためのConflict-Based Searchアルゴリズム。<strong>DRP Challenge @ AAMAS 2025 優勝。</strong></p>
 <span class="pub-tag">マルチエージェント</span> <span class="pub-tag">経路計画</span>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Easy-CBS">GitHub</a> | <a href="/slides/AAMAS_DRP.pdf">スライド</a></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Easy-CBS">GitHub</a> | <a href="/mysite/slides/AAMAS_DRP.pdf">スライド</a></div>
 </div>
 
 <div class="project-card">
 <h3>Gauss-Process</h3>
 <p>周波数領域ガウス過程回帰による伝達関数推定のためのシステム同定。<strong>ISCS 2026 採択・発表。</strong></p>
 <span class="pub-tag">ガウス過程</span> <span class="pub-tag">システム同定</span>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a> | <a href="/slides/iscs_slide.pdf">スライド</a></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
 </div>
 
 <div class="project-card">

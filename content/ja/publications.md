@@ -21,7 +21,7 @@ TocOpen: true
 <div class="pub-title">Virtual Data Generation for Complex Industrial Activity Recognition</div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong></div>
 <div class="pub-meta"><span class="pub-venue">IJABC, Vol. 2025, No. 2 / ABC2025 Competition</span> <span class="pub-tag">データ拡張</span> <span class="pub-tag">行動認識</span> <span class="pub-award">ABC2025 優勝</span></div>
-<div class="pub-links"><a href="https://www.jstage.jst.go.jp/article/ijabc/2025/2/2025_107/_article/-char/en/">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/Virtual_Data_Generation">コード</a> | <a href="/slides/ABC2025_Virtual_Data_Generation.pdf">スライド</a> | <a href="https://autocare.ai/abc2025">ABC2025</a></div>
+<div class="pub-links"><a href="https://www.jstage.jst.go.jp/article/ijabc/2025/2/2025_107/_article/-char/en/">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/Virtual_Data_Generation">コード</a> | <a href="/mysite/slides/ABC2025_Virtual_Data_Generation.pdf">スライド</a> | <a href="https://autocare.ai/abc2025">ABC2025</a></div>
 </div>
 
 <div class="pub-entry">
@@ -35,7 +35,7 @@ TocOpen: true
 <div class="pub-title">Introduce Easy-CBS</div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong></div>
 <div class="pub-meta"><span class="pub-venue">DRP Challenge @ AAMAS 2025</span> <span class="pub-tag">マルチエージェント</span> <span class="pub-tag">経路計画</span> <span class="pub-award">AAMAS 2025 優勝</span></div>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Easy-CBS">コード</a> | <a href="/slides/AAMAS_DRP.pdf">スライド</a></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Easy-CBS">コード</a> | <a href="/mysite/slides/AAMAS_DRP.pdf">スライド</a></div>
 </div>
 
 <div class="pub-entry">
@@ -49,7 +49,7 @@ TocOpen: true
 <div class="pub-title">System Identification via Frequency-Domain Gaussian Process Regression for Transfer-Function Estimation</div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong></div>
 <div class="pub-meta"><span class="pub-venue">ISCS 2026</span> <span class="pub-tag">ガウス過程</span> <span class="pub-tag">システム同定</span></div>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/slides/iscs_slide.pdf">スライド</a></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
 </div>
 
 </div>
