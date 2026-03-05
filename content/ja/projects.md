@@ -32,9 +32,9 @@ ShowToc: false
 
 <div class="project-card">
 <h3>Gauss-Process</h3>
-<p>周波数領域ガウス過程回帰による伝達関数推定のためのシステム同定。ISCS 2026に投稿。</p>
+<p>周波数領域ガウス過程回帰による伝達関数推定のためのシステム同定。<strong>ISCS 2026 採択・発表。</strong></p>
 <span class="pub-tag">ガウス過程</span> <span class="pub-tag">システム同定</span>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a> | <a href="/slides/iscs_slide.pdf">スライド</a></div>
 </div>
 
 <div class="project-card">

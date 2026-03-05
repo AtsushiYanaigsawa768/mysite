@@ -32,9 +32,9 @@ ShowToc: false
 
 <div class="project-card">
 <h3>Gauss-Process</h3>
-<p>System Identification via Frequency-Domain Gaussian Process Regression for Transfer-Function Estimation. Submitted to ISCS 2026.</p>
+<p>System Identification via Frequency-Domain Gaussian Process Regression for Transfer-Function Estimation. <strong>Presented at ISCS 2026.</strong></p>
 <span class="pub-tag">Gaussian Process</span> <span class="pub-tag">System Identification</span>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a> | <a href="/slides/iscs_slide.pdf">Slides</a></div>
 </div>
 
 <div class="project-card">
