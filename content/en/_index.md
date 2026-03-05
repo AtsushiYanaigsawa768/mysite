@@ -3,6 +3,10 @@ title: "Home"
 layout: "home"
 ---
 
+## Contact
+
+<div class="email-obfuscated">yanagisawa.atsushi.62t<span class="email-at"></span>st.kyoto-u.ac.jp</div>
+
 ## News
 
 <div class="news-list">
