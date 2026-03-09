@@ -1,0 +1,46 @@
+{{- define "main" }}
+
+<header class="page-header">
+  {{- partial "breadcrumbs.html" . }}
+  <h1>{{ .Title }}</h1>
+  {{- if .Description }}
+  <div class="post-description">
+    {{ .Description | markdownify }}
+  </div>
+  {{- end }}
+</header>
+
+<div class="blog-list">
+  {{- $pages := .RegularPages }}
+  {{- range $pages.ByDate.Reverse }}
+  <article class="blog-card">
+    <a href="{{ .Permalink }}" class="blog-card-link">
+      <div class="blog-card-inner">
+        <div class="blog-card-meta">
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+          {{- range .Params.tags }}
+          <span class="blog-tag">{{ . }}</span>
+          {{- end }}
+        </div>
+        <h2 class="blog-card-title">{{ .Title }}</h2>
+        {{- if .Params.summary }}
+        <p class="blog-card-summary">{{ .Params.summary }}</p>
+        {{- else }}
+        <p class="blog-card-summary">{{ .Summary | plainify | truncate 200 }}</p>
+        {{- end }}
+        {{- if .Params.tocSections }}
+        <div class="blog-card-sections">
+          <span class="blog-card-sections-label">Sections:</span>
+          {{- range .Params.tocSections }}
+          <span class="blog-card-section">{{ . }}</span>
+          {{- end }}
+        </div>
+        {{- end }}
+        <span class="blog-card-read">Read more &rarr;</span>
+      </div>
+    </a>
+  </article>
+  {{- end }}
+</div>
+
+{{- end }}{{/* end main */}}

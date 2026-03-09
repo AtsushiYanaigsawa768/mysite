@@ -1,0 +1,53 @@
+{{- define "main" }}
+
+<article class="blog-post">
+  <header class="blog-post-header">
+    {{ partial "breadcrumbs.html" . }}
+    <div class="blog-post-meta-top">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      {{- if .ReadingTime }}
+      <span class="blog-post-readtime">&middot; {{ .ReadingTime }} min read</span>
+      {{- end }}
+    </div>
+    <h1 class="blog-post-title">{{ .Title }}</h1>
+    {{- if .Description }}
+    <div class="blog-post-description">
+      {{ .Description }}
+    </div>
+    {{- end }}
+    <div class="blog-post-tags">
+      {{- range .Params.tags }}
+      <span class="blog-tag">{{ . }}</span>
+      {{- end }}
+    </div>
+    <div class="blog-post-meta">
+      {{- partial "translation_list.html" . -}}
+    </div>
+  </header>
+
+  {{- if (.Param "ShowToc") }}
+  {{- partial "toc.html" . }}
+  {{- end }}
+
+  {{- if .Content }}
+  <div class="blog-post-content post-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+
+  <footer class="blog-post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}
+      <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+      {{- end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}
+    {{- partial "post_nav_links.html" . }}
+    {{- end }}
+  </footer>
+</article>
+
+{{- end }}{{/* end main */}}

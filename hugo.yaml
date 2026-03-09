@@ -63,6 +63,10 @@ languages:
           name: Awards
           url: /awards/
           weight: 40
+        - identifier: blog
+          name: Blog
+          url: /blog/
+          weight: 45
         - identifier: search
           name: Search
           url: /search/
@@ -108,6 +112,10 @@ languages:
           name: 受賞歴
           url: /awards/
           weight: 40
+        - identifier: blog
+          name: ブログ
+          url: /blog/
+          weight: 45
         - identifier: search
           name: 検索
           url: /search/
