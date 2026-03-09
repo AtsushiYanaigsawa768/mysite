@@ -22,7 +22,7 @@ TocOpen: true
 <div class="timeline-date">2025.04 - Present</div>
 <div class="timeline-content">
 <h3>Technical Staff, <a href="https://llmc.nii.ac.jp/en/">NII LLMC</a></h3>
-<p>Technical Staff for the NII Large Language Model Cross-institutional Collaboration (LLMC) program at the National Institute of Informatics.</p>
+<p>Technical Staff at the Research and Development Center for Large Language Models (LLMC), National Institute of Informatics (NII).</p>
 </div>
 </div>
 

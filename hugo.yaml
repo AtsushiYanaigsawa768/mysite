@@ -28,7 +28,7 @@ languages:
     weight: 1
     title: "Atsushi Yanagisawa"
     params:
-      description: "Atsushi Yanagisawa - Undergraduate student at Kyoto University, Department of Informatics, Mathematical Engineering. Research interests: Optimization, LLM, Machine Learning."
+      description: "Atsushi Yanagisawa - Undergraduate student at Kyoto University, Undergraduate School of Informatics and Mathematical Science, Applied Mathematics and Physics. Research interests: Optimization, LLM, Machine Learning."
       keywords:
         - Atsushi Yanagisawa
         - Yanagisawa
@@ -41,7 +41,7 @@ languages:
         title: "Atsushi Yanagisawa"
         subtitle: |
           Undergraduate Student, Kyoto University
-          Faculty of Engineering, Dept. of Informatics, Mathematical Engineering Course
+          Faculty of Engineering, Undergraduate School of Informatics and Mathematical Science, Applied Mathematics and Physics
 
           **Interests:** Optimization / Large Language Models / Machine Learning
         buttons:
