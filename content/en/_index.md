@@ -3,13 +3,17 @@ title: "Home"
 layout: "home"
 ---
 
+## Contact
+
+<div class="email-obfuscated">yanagisawa.atsushi.62t<span class="email-at"></span>st.kyoto-u.ac.jp</div>
+
 ## News
 
 <div class="news-list">
 
 <div class="news-item">
 <div class="news-date">2026.03</div>
-<div class="news-text"><span class="news-badge">Paper</span> "System Identification via Frequency-Domain GP Regression" submitted to ISCS 2026 &mdash; <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">Code</a></div>
+<div class="news-text"><span class="news-badge">Paper</span> "System Identification via Frequency-Domain GP Regression" presented at ISCS 2026 &mdash; <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">Code</a> | <a href="/mysite/slides/iscs_slide.pdf">Slides</a></div>
 </div>
 
 <div class="news-item">

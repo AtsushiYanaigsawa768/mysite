@@ -322,6 +322,48 @@
   color: #1a1a1a;
 }
 
+/* --- Email obfuscation --- */
+.email-obfuscated {
+  font-size: 0.95rem;
+  font-family: monospace;
+  user-select: all;
+  -webkit-user-select: all;
+}
+
+.email-at {
+  display: inline;
+  font-size: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.email-at::after {
+  content: " [at] ";
+  font-size: 0.95rem;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+/* --- Pub title permalink --- */
+.pub-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pub-title a:hover {
+  text-decoration: underline;
+}
+
+.project-card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-card h3 a:hover {
+  text-decoration: underline;
+}
+
 /* --- Publication Page Links --- */
 .post-content a[href*="arxiv.org"],
 .post-content a[href*="openreview.net"],
