@@ -11,6 +11,7 @@ tocSections:
   - "データセット"
   - "実装の詳細"
   - "評価設定"
+  - "実験結果"
   - "まとめと今後の展望"
   - "参考文献"
 ShowToc: true
@@ -69,7 +70,17 @@ Linear(1152 → 4096) → GELU → Linear(4096 → 4096)
 
 ## 学習パイプライン
 
-本学習パイプラインは三つのフェーズで構成され、各フェーズは前フェーズで確立された能力の上に構築される。
+本学習パイプラインは三つのフェーズで構成され、各フェーズは前フェーズで確立された能力の上に構築される。以下の表に、各学習段階におけるモジュールの学習状態をまとめる：
+
+| フェーズ | ステージ | Vision Encoder | MLP Projector | LLM | 目的 |
+|----------|----------|:---:|:---:|:---:|------|
+| Phase 1 | Stage 1-1 | 凍結 | **学習** | 凍結 | 視覚-言語アライメント |
+| Phase 1 | Stage 1-2 | **学習** | **学習** | LoRA (r=64) | 視覚的指示理解 |
+| Phase 2 | SFT | — | — | QLoRA (r=32) | 構造化推論 |
+| Phase 3 | Stage 3-1 | — | — | LoRA (r=16) | 金融テキストQA |
+| Phase 3 | Stage 3-2 | 凍結 | **学習** | LoRA (r=16) | 金融文書読解 |
+
+**凍結** = パラメータ固定、**学習** = パラメータ更新、**—** = モジュール不使用
 
 ### Phase 1: 基盤VLM構築
 
@@ -277,9 +288,147 @@ Compassは全ての会話的インタラクションにllm-jp-4の指示フォ�
 
 このベンチマークは実際の金融文書の理解と分類能力をテストし、Phase 3のドメイン特化の有効性を直接的に測定する。
 
+## 実験結果
+
+### 学習損失
+
+図2に、Compass学習パイプライン全フェーズの学習損失曲線を示す。
+
+![図2: Compassパイプライン全フェーズの学習損失曲線](training_loss_6panels.png)
+
+### 定量的結果
+
+全タスクは**zero-shot**設定で評価した。以下の表に、各学習フェーズ終了時の性能と参考ベースラインを示す。
+
+| ベンチマーク | Phase 1 | Phase 2 | **Phase 3** | Llama-3.3-70B | Qwen-14B-Chat |
+|-------------|:-------:|:-------:|:-----------:|:-------------:|:-------------:|
+| GSM-8K | 64.6 | **73.2** | 71.9 | — | 59.3 |
+| *EDINET Bench* | | | | | |
+| &ensp;earnings† | 0.532 | 0.500 | 0.458 | 0.41 | — |
+| &ensp;fraud† | 0.472 | 0.534 | **0.580** | 0.59 | — |
+| &ensp;industry | **8.5** | 6.9 | 6.5 | 14.0 | — |
+| JP Fin Harness | **54.2** | 31.6 | 49.6 | — | 49.1 |
+
+†ROC-AUC。その他はAccuracy（%）。**太字**はCompassの各フェーズ中の最良結果。—は未評価。
+
+Phase 2の推論強化によりGSM-8Kが64.6から**73.2**に向上した一方、金融タスクの性能が大幅に低下した（JP Fin Harness: 54.2 → 31.6）。Phase 3のドメイン特化により金融タスク性能が49.6まで回復し、三段階アプローチの有効性が示された。注目すべきは、Phase 1モデルが既に強い金融知識を示していた点（JP Fin Harness: 54.2）であり、これは学習に使用した官公庁PDF文書に金融関連の情報が含まれていたためと考えられる。
+
+### 定性的結果：Phase 1（視覚的指示理解）
+
+Phase 1の学習後、Compassは日本語での視覚的質問の理解と回答が可能となった。
+
+**例1（正解 — 視覚的シーン理解）：**
+
+![Phase 1の成功例：モデルが画像から動物園を正しく識別](phase1_sucess1.jpg)
+
+> **指示：** ここはどこですか
+>
+> **モデル応答：** 動物園
+>
+> **正解：** 動物園
+
+**例2（正解 — 人数カウント）：**
+
+> **指示：** 画像に写っている人の数はいくつですか？
+>
+> **モデル応答：** 2人
+>
+> **正解：** ２人
+
+**例3（不正解 — 文書詳細抽出）：**
+
+> **指示：** この資料のページ番号は何ですか？
+>
+> **モデル応答：** 23
+>
+> **正解：** 22
+
+この誤りは、文書画像から正確な数値の詳細を抽出するには、後の学習フェーズでさらに精緻化される細粒度の視覚的注意が必要であることを示している。
+
+### 定性的結果：Phase 2（数学的推論）
+
+Phase 2の知識蒸留による学習後、Compassは構造化されたXMLフォーマットで推論を生成する。以下にGSM8Kの代表的な例を示す。
+
+**例1（正解）：**
+
+> **問題：** A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?
+
+```xml
+<Problem>
+A robe takes 2 bolts of blue fiber and half that much white fiber.
+How many bolts in total does it take?
+</Problem>
+
+<Thinking>
+First, the problem states that a robe takes 2 bolts of blue fiber.
+Then, "half that much white fiber" refers to the blue fiber,
+so half of 2 bolts is 1 bolt of white fiber.
+Total: 2 bolts (blue) + 1 bolt (white) = 3 bolts total.
+</Thinking>
+
+<Answer>
+\boxed{3}
+</Answer>
+```
+
+**予測：** 3 &ensp;|&ensp; **正解：** 3 &ensp;|&ensp; **正答**
+
+**例2（不正解）：**
+
+> **問題：** Josh decides to try flipping a house. He buys a house for $80,000 and then puts in $50,000 in repairs. This increased the value of the house by 150%. How much profit did he make?
+
+```xml
+<Problem>
+Josh buys a house for $80,000 and puts in $50,000 in repairs.
+This increased the value of the house by 150%.
+How much profit did he make?
+</Problem>
+
+<Thinking>
+Total cost: $80,000 + $50,000 = $130,000.
+The repairs increased the value by 150% of the original value:
+$80,000 × 1.5 = $120,000.
+Profit: $120,000 - $130,000 = -$10,000...
+</Thinking>
+
+<Answer>
+\boxed{0}
+</Answer>
+```
+
+**予測：** 0 &ensp;|&ensp; **正解：** 70,000 &ensp;|&ensp; **誤答**
+
+モデルは「increased the value by 150%」を誤解釈している。正しくは新しい価値が $80,000 + $80,000 × 1.5 = $200,000 となり、利益は $200,000 − $130,000 = $70,000 である。
+
+**例3（正解）：**
+
+> **問題：** Every day, Wendi feeds each of her chickens three cups of mixed chicken feed. She gives the chickens their feed in three separate meals. In the morning, she gives her flock of chickens 15 cups of feed. In the afternoon, she gives her chickens another 25 cups of feed. How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens?
+
+```xml
+<Problem>
+Wendi feeds each of her 20 chickens 3 cups per day in 3 meals.
+Morning: 15 cups. Afternoon: 25 cups.
+How many cups for the final meal?
+</Problem>
+
+<Thinking>
+Total feed given so far: 15 + 25 = 40 cups.
+Total feed needed: 20 chickens × 3 cups = 60 cups.
+Final meal: 60 - 40 = 20 cups.
+</Thinking>
+
+<Answer>
+\boxed{20}
+</Answer>
+```
+
+**予測：** 20 &ensp;|&ensp; **正解：** 20 &ensp;|&ensp; **正答**
+
 ## まとめと今後の展望
 
-*本セクションは、損失収束の分析、正解との比較によるモデル出力の定性的評価、考察、及び結論を含む詳細な実験結果で更新予定。*
+Phase 2の推論強化により数学的推論が明確に向上し（GSM-8K: 64.6 → 73.2）、Phase 3のドメイン特化によりPhase 2で低下した金融タスク性能が回復した（JP Fin Harness: 31.6 → 49.6）。Phase 1モデルの強い初期的な金融性能（54.2）は、OCR・QAデータ生成に使用した官公庁PDF文書が既に十分な金融知識を含んでいることを示唆しており、この知識はPhase 2のテキストのみの推論学習で部分的に上書きされ、Phase 3の金融ファインチューニングで回復されたと考えられる。
+
+EDINET Benchの不正会計検出タスクでは、Phase 3終了後にROC-AUC 0.580を達成し、8Bパラメータのモデルでありながらもが上位のベースライン（Llama-3.3-70B: 0.59）に迫る結果となった。しかし、業種分類タスクは依然として困難（最良で8.5% vs. Llama-3.3-70Bの14.0%）であり、金融文書に対する多クラス分類の改善の余地がある。
 
 現行モデルの主要なアーキテクチャ上の制約は、1回の推論で**1画像のみ**を処理することである。実際の金融分析では、有価証券報告書内の複数ページの相互参照や異なる文書間での数値比較が頻繁に必要となる。Compassを**マルチ画像入力**に対応させることは、金融文書分析ワークフローにおける実用的なデプロイメントを実現するための重要な今後の方向性である。
 

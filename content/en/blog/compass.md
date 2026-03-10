@@ -11,6 +11,7 @@ tocSections:
   - "Datasets"
   - "Implementation Details"
   - "Evaluation Setup"
+  - "Experimental Results"
   - "Conclusion and Future Work"
   - "References"
 ShowToc: true
@@ -69,7 +70,17 @@ For high-resolution document images, we adopt the AnyRes-9 strategy from LLaVA-O
 
 ## Training Pipeline
 
-Our training pipeline consists of three phases, each designed to build upon the capabilities established in previous phases.
+Our training pipeline consists of three phases, each designed to build upon the capabilities established in previous phases. The following table summarizes the module training states across all phases:
+
+| Phase | Stage | Vision Encoder | MLP Projector | LLM | Objective |
+|-------|-------|:---:|:---:|:---:|-----------|
+| Phase 1 | Stage 1-1 | Frozen | **Train** | Frozen | Vision-language alignment |
+| Phase 1 | Stage 1-2 | **Train** | **Train** | LoRA (r=64) | Visual instruction following |
+| Phase 2 | SFT | — | — | QLoRA (r=32) | Structured reasoning |
+| Phase 3 | Stage 3-1 | — | — | LoRA (r=16) | Financial text QA |
+| Phase 3 | Stage 3-2 | Frozen | **Train** | LoRA (r=16) | Financial document reading |
+
+**Frozen** = parameters fixed; **Train** = parameters updated; **—** = module not used.
 
 ### Phase 1: Foundation VLM Development
 
@@ -277,9 +288,147 @@ Evaluation metrics include accuracy across all tasks and macro F1 for the chabsa
 
 This benchmark tests the model's ability to understand and classify real financial documents, directly measuring the effectiveness of Phase 3 domain specialization.
 
+## Experimental Results
+
+### Training Loss
+
+Figure 2 shows the training loss curves across all phases of the Compass training pipeline.
+
+![Figure 2: Training loss curves across all phases of the Compass pipeline.](training_loss_6panels.png)
+
+### Quantitative Results
+
+All tasks are evaluated in a **zero-shot** setting. The following table shows performance at the end of each training phase, along with reference baselines.
+
+| Benchmark | Phase 1 | Phase 2 | **Phase 3** | Llama-3.3-70B | Qwen-14B-Chat |
+|-----------|:-------:|:-------:|:-----------:|:-------------:|:-------------:|
+| GSM-8K | 64.6 | **73.2** | 71.9 | — | 59.3 |
+| *EDINET Bench* | | | | | |
+| &ensp;earnings† | 0.532 | 0.500 | 0.458 | 0.41 | — |
+| &ensp;fraud† | 0.472 | 0.534 | **0.580** | 0.59 | — |
+| &ensp;industry | **8.5** | 6.9 | 6.5 | 14.0 | — |
+| JP Fin Harness | **54.2** | 31.6 | 49.6 | — | 49.1 |
+
+†ROC-AUC. All others are Accuracy (%). **Bold** indicates the best result among Compass phases. — indicates not evaluated.
+
+Phase 2 reasoning enhancement improved GSM-8K from 64.6 to **73.2**, but significantly degraded financial task performance (JP Fin Harness: 54.2 → 31.6). Phase 3 domain specialization recovered financial performance to 49.6, demonstrating the effectiveness of the three-phase approach. Notably, the Phase 1 model already exhibited strong financial knowledge (JP Fin Harness: 54.2), likely due to financial content present in the government PDF documents used during training.
+
+### Qualitative Results: Phase 1 (Visual Instruction Following)
+
+After Phase 1 training, Compass demonstrates the ability to understand and respond to visual questions in Japanese.
+
+**Example 1 (Correct — Visual Scene Understanding):**
+
+![Phase 1 success example: the model correctly identifies a zoo from the image.](phase1_sucess1.jpg)
+
+> **Instruction:** ここはどこですか（Where is this place?）
+>
+> **Model Response:** 動物園（Zoo）
+>
+> **Ground Truth:** 動物園（Zoo）
+
+**Example 2 (Correct — Counting):**
+
+> **Instruction:** 画像に写っている人の数はいくつですか？（How many people are in the image?）
+>
+> **Model Response:** 2人（2 people）
+>
+> **Ground Truth:** ２人（2 people）
+
+**Example 3 (Incorrect — Document Detail Extraction):**
+
+> **Instruction:** この資料のページ番号は何ですか？（What is the page number of this document?）
+>
+> **Model Response:** 23
+>
+> **Ground Truth:** 22
+
+This error illustrates a common challenge: extracting precise numerical details from document images requires fine-grained visual attention that is further refined in later training phases.
+
+### Qualitative Results: Phase 2 (Mathematical Reasoning)
+
+After Phase 2 training with knowledge distillation, Compass generates structured XML-formatted reasoning. Below are representative GSM8K examples.
+
+**Example 1 (Correct):**
+
+> **Question:** A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?
+
+```xml
+<Problem>
+A robe takes 2 bolts of blue fiber and half that much white fiber.
+How many bolts in total does it take?
+</Problem>
+
+<Thinking>
+First, the problem states that a robe takes 2 bolts of blue fiber.
+Then, "half that much white fiber" refers to the blue fiber,
+so half of 2 bolts is 1 bolt of white fiber.
+Total: 2 bolts (blue) + 1 bolt (white) = 3 bolts total.
+</Thinking>
+
+<Answer>
+\boxed{3}
+</Answer>
+```
+
+**Predicted:** 3 &ensp;|&ensp; **Reference:** 3 &ensp;|&ensp; **Correct**
+
+**Example 2 (Incorrect):**
+
+> **Question:** Josh decides to try flipping a house. He buys a house for $80,000 and then puts in $50,000 in repairs. This increased the value of the house by 150%. How much profit did he make?
+
+```xml
+<Problem>
+Josh buys a house for $80,000 and puts in $50,000 in repairs.
+This increased the value of the house by 150%.
+How much profit did he make?
+</Problem>
+
+<Thinking>
+Total cost: $80,000 + $50,000 = $130,000.
+The repairs increased the value by 150% of the original value:
+$80,000 × 1.5 = $120,000.
+Profit: $120,000 - $130,000 = -$10,000...
+</Thinking>
+
+<Answer>
+\boxed{0}
+</Answer>
+```
+
+**Predicted:** 0 &ensp;|&ensp; **Reference:** 70,000 &ensp;|&ensp; **Incorrect**
+
+The model misinterprets "increased the value by 150%" — the correct interpretation is that the new value is $80,000 + $80,000 × 1.5 = $200,000, yielding a profit of $200,000 − $130,000 = $70,000.
+
+**Example 3 (Correct):**
+
+> **Question:** Every day, Wendi feeds each of her chickens three cups of mixed chicken feed. She gives the chickens their feed in three separate meals. In the morning, she gives her flock of chickens 15 cups of feed. In the afternoon, she gives her chickens another 25 cups of feed. How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens?
+
+```xml
+<Problem>
+Wendi feeds each of her 20 chickens 3 cups per day in 3 meals.
+Morning: 15 cups. Afternoon: 25 cups.
+How many cups for the final meal?
+</Problem>
+
+<Thinking>
+Total feed given so far: 15 + 25 = 40 cups.
+Total feed needed: 20 chickens × 3 cups = 60 cups.
+Final meal: 60 - 40 = 20 cups.
+</Thinking>
+
+<Answer>
+\boxed{20}
+</Answer>
+```
+
+**Predicted:** 20 &ensp;|&ensp; **Reference:** 20 &ensp;|&ensp; **Correct**
+
 ## Conclusion and Future Work
 
-*This section will be updated with detailed experimental results, including loss convergence analysis, qualitative evaluation of model outputs compared to ground truth answers, discussion of findings, and conclusions.*
+Phase 2 reasoning enhancement yielded a clear improvement in mathematical reasoning (GSM-8K: 64.6 → 73.2), while Phase 3 domain specialization recovered financial task performance that had degraded during Phase 2 (JP Fin Harness: 31.6 → 49.6). The Phase 1 model's strong initial financial performance (54.2) suggests that government PDF documents used for OCR and QA data generation already contain substantial financial knowledge, which was partially overwritten during text-only reasoning training in Phase 2 and subsequently recovered through targeted financial fine-tuning in Phase 3.
+
+For the EDINET Bench fraud detection task, Compass achieved an ROC-AUC of 0.580 after Phase 3, approaching the Llama-3.3-70B baseline (0.59) despite having only 8B parameters. However, the industry prediction task remains challenging (8.5% at best vs. 14.0% for Llama-3.3-70B), indicating room for improvement in multi-class classification over financial documents.
 
 A key architectural limitation of the current model is that it processes only **one image per inference call**. Real-world financial analysis frequently requires cross-referencing multiple pages within a securities report or comparing figures across different documents. Extending Compass to support **multi-image input** is a critical direction for future work to enable practical deployment in financial document analysis workflows.
 
