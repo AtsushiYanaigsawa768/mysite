@@ -19,17 +19,14 @@ ShowToc: true
 ---
 
 > **GitHub Repository:** [https://github.com/AtsushiYanaigsawa768/Compass](https://github.com/AtsushiYanaigsawa768/Compass)
+> **HuggingFace Collection:** [https://huggingface.co/collections/Yana/compass](https://huggingface.co/collections/Yana/compass)
 
 This project was conducted as part of the free-form task of FT-LLM 2026.
 
 **Title:** Development of a Japanese Financial VLM through Integration of Reasoning Enhancement and Document Comprehension
+(推論強化と文書読解の統合による日本語金融VLMの開発)
 
 This research was carried out by [Atsushi Yanagisawa](https://atsushiyanaigsawa768.github.io/mysite/en/) and [Genshin Kakimoto](https://github.com/kakimoto0225).
-
-For training results and detailed research findings, please refer to the links below.
-- [HuggingFace Collection](https://huggingface.co/collections/Yana/compass)
-- [Blog (English)](https://atsushiyanaigsawa768.github.io/mysite/en/blog/compass/)
-- [Blog (日本語)](https://atsushiyanaigsawa768.github.io/mysite/ja/blog/compass/)
 
 ---
 
