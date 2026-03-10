@@ -2,38 +2,59 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on Atsushi Yanagisawa</title>
-    <link>http://localhost:1313/mysite/en/tags/</link>
+    <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/</link>
     <description>Recent content in Tags on Atsushi Yanagisawa</description>
     <generator>Hugo -- 0.156.0</generator>
     <language>en</language>
     <lastBuildDate>Mon, 09 Mar 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/mysite/en/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://atsushiyanaigsawa768.github.io/mysite/en/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Finance</title>
-      <link>http://localhost:1313/mysite/en/tags/finance/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/finance/</link>
       <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/en/tags/finance/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/tags/finance/</guid>
       <description></description>
     </item>
     <item>
       <title>Japanese</title>
-      <link>http://localhost:1313/mysite/en/tags/japanese/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/japanese/</link>
       <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/en/tags/japanese/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/tags/japanese/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>LLaVA</title>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/llava/</link>
+      <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/tags/llava/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>LoRA</title>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/lora/</link>
+      <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/tags/lora/</guid>
       <description></description>
     </item>
     <item>
       <title>NLP</title>
-      <link>http://localhost:1313/mysite/en/tags/nlp/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/nlp/</link>
       <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/en/tags/nlp/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/tags/nlp/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>SFT</title>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/sft/</link>
+      <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/tags/sft/</guid>
       <description></description>
     </item>
     <item>
       <title>VLM</title>
-      <link>http://localhost:1313/mysite/en/tags/vlm/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/en/tags/vlm/</link>
       <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/en/tags/vlm/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/en/tags/vlm/</guid>
       <description></description>
     </item>
   </channel>

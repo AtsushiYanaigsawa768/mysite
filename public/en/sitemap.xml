@@ -2,150 +2,189 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/mysite/en/blog/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/blog/</loc>
     <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/blog/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/blog/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/blog/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/blog/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/blog/compass/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/blog/compass/</loc>
     <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/blog/compass/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/blog/compass/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/blog/compass/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/blog/compass/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/tags/finance/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/finance/</loc>
     <lastmod>2026-03-09T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/mysite/en/</loc>
-    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="http://localhost:1313/mysite/ja/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="http://localhost:1313/mysite/en/"
-                />
-  </url><url>
-    <loc>http://localhost:1313/mysite/en/tags/japanese/</loc>
-    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/mysite/en/tags/nlp/</loc>
-    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/mysite/en/tags/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/</loc>
     <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/tags/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/tags/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/tags/vlm/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/japanese/</loc>
+    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/llava/</loc>
     <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/tags/vlm/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/tags/llava/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/tags/vlm/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/tags/llava/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/awards/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/lora/</loc>
+    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/awards/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/tags/lora/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/awards/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/tags/lora/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/categories/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/nlp/</loc>
+    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/sft/</loc>
+    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/categories/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/tags/sft/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/categories/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/tags/sft/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/experience/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/</loc>
+    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/experience/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/experience/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/tags/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/projects/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/tags/vlm/</loc>
+    <lastmod>2026-03-09T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/projects/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/tags/vlm/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/projects/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/tags/vlm/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/publications/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/awards/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/publications/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/awards/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/publications/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/awards/"
                 />
   </url><url>
-    <loc>http://localhost:1313/mysite/en/search/</loc>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="ja"
-                href="http://localhost:1313/mysite/ja/search/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://localhost:1313/mysite/en/search/"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/categories/"
+                />
+  </url><url>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/experience/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/experience/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/experience/"
+                />
+  </url><url>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/projects/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/projects/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/projects/"
+                />
+  </url><url>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/publications/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/publications/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/publications/"
+                />
+  </url><url>
+    <loc>https://atsushiyanaigsawa768.github.io/mysite/en/search/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="ja"
+                href="https://atsushiyanaigsawa768.github.io/mysite/ja/search/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://atsushiyanaigsawa768.github.io/mysite/en/search/"
                 />
   </url>
 </urlset>

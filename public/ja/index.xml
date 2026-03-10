@@ -2,45 +2,45 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>ホーム on 栁澤篤</title>
-    <link>http://localhost:1313/mysite/ja/</link>
+    <link>https://atsushiyanaigsawa768.github.io/mysite/ja/</link>
     <description>Recent content in ホーム on 栁澤篤</description>
     <generator>Hugo -- 0.156.0</generator>
     <language>ja</language>
     <lastBuildDate>Mon, 09 Mar 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/mysite/ja/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://atsushiyanaigsawa768.github.io/mysite/ja/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>推論強化と文書読解の統合による日本語金融VLMの開発</title>
-      <link>http://localhost:1313/mysite/ja/blog/compass/</link>
+      <title>Compass: 推論強化と文書読解の統合による日本語金融Vision-Language Modelの開発</title>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/blog/compass/</link>
       <pubDate>Mon, 09 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/ja/blog/compass/</guid>
-      <description>日本語金融ドメインに特化したVision-Language Modelの開発について、推論強化技術と高度な文書読解能力の統合アプローチを紹介します。</description>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/blog/compass/</guid>
+      <description>日本語金融文書理解に特化したVision-Language Model「Compass」を提案する。LLaVA-OneVisionアーキテクチャにllm-jp-4-8bを統合し、三段階の学習パイプラインにより、視覚-言語アライメント、知識蒸留による数学的推論強化、及び政府金融文書の直接的な視覚読解による金融ドメイン特化を実現する。</description>
     </item>
     <item>
       <title>プロジェクト</title>
-      <link>http://localhost:1313/mysite/ja/projects/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/projects/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/ja/projects/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/projects/</guid>
       <description>主なプロジェクト</description>
     </item>
     <item>
       <title>経歴</title>
-      <link>http://localhost:1313/mysite/ja/experience/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/experience/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/ja/experience/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/experience/</guid>
       <description>研究経歴・学歴</description>
     </item>
     <item>
       <title>受賞歴</title>
-      <link>http://localhost:1313/mysite/ja/awards/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/awards/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/ja/awards/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/awards/</guid>
       <description>受賞歴</description>
     </item>
     <item>
       <title>論文</title>
-      <link>http://localhost:1313/mysite/ja/publications/</link>
+      <link>https://atsushiyanaigsawa768.github.io/mysite/ja/publications/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/mysite/ja/publications/</guid>
+      <guid>https://atsushiyanaigsawa768.github.io/mysite/ja/publications/</guid>
       <description>論文一覧</description>
     </item>
   </channel>
