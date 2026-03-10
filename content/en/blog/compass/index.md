@@ -202,8 +202,6 @@ PDF pages are scraped asynchronously with rate limiting, then filtered for finan
 | C | Medium-Hard | Financial formula application | Calculate ROE, WACC, PER from document data |
 | D | Hard | Multi-step reasoning | Complex calculations requiring ~8 reasoning steps |
 
-Multi-iteration voting (8 iterations by default) with Jaccard similarity is used to ensure answer consistency.
-
 **Visual processing:** PDF pages are rendered to images at **150 DPI** using PyMuPDF and input directly to the VLM, bypassing text extraction. This approach aligns with the evaluation setting, as benchmarks such as JDocQA and EDINET_Bench use image-format document input.
 
 **Training configuration:** Vision encoder frozen; MLP projector and LLM (via LoRA r=16, alpha=32) are updated.
@@ -292,7 +290,7 @@ Evaluation metrics include accuracy across all tasks and macro F1 for the chabsa
 
 ### EDINET Bench (Financial Document Classification)
 
-**EDINET Bench** evaluates performance on financial document classification tasks derived from EDINET (Electronic Disclosure for Investors' NETwork) filings:
+**EDINET Bench** [13] evaluates performance on financial document classification tasks derived from EDINET (Electronic Disclosure for Investors' NETwork) filings:
 
 | Task | Type | Description | Approx. Size |
 |------|------|-------------|-------------|
@@ -300,7 +298,7 @@ Evaluation metrics include accuracy across all tasks and macro F1 for the chabsa
 | earnings_forecast | Binary classification | Predicting earnings direction | ~1,500 |
 | industry_prediction | Multi-class (16 classes) | Classifying company industry sector | ~800 |
 
-This benchmark tests the model's ability to understand and classify real financial documents, directly measuring the effectiveness of Phase 3 domain specialization.
+The input consists of four sections extracted from annual securities reports: Summary (business overview), BS (balance sheet), CF (cash flow statement), and PL (profit and loss statement). This benchmark tests the model's ability to understand and classify real financial documents, directly measuring the effectiveness of Phase 3 domain specialization.
 
 ---
 
@@ -316,16 +314,28 @@ Figure 2 shows the training loss curves across all phases of the Compass trainin
 
 All tasks are evaluated in a **zero-shot** setting. The following table shows performance at the end of each training phase, along with reference baselines.
 
-| Benchmark | Phase 1 | Phase 2 | **Phase 3** | Llama-3.3-70B | Qwen-14B-Chat |
-|-----------|:-------:|:-------:|:-----------:|:-------------:|:-------------:|
-| GSM-8K | 64.6 | **73.2** | 71.9 | — | 59.3 |
-| *EDINET Bench* | | | | | |
-| &ensp;earnings† | 0.532 | 0.500 | 0.458 | 0.41 | — |
-| &ensp;fraud† | 0.472 | 0.534 | **0.580** | 0.59 | — |
-| &ensp;industry | **8.5** | 6.9 | 6.5 | 14.0 | — |
-| JP Fin Harness | **54.2** | 31.6 | 49.6 | — | 49.1 |
+| Benchmark | Phase 1 | Phase 2 | Phase 3 Stage 1 | **Phase 3 Stage 2** | Llama-3.3-70B [13] | Qwen-14B-Chat [14] |
+|-----------|:-------:|:-------:|:---------------:|:-------------------:|:-------------------:|:------------------:|
+| GSM-8K | 64.6 | **73.2** | — | 71.9 | — | 59.3 |
+| *EDINET Bench* | | | | | | |
+| &ensp;earnings† | 0.532 | 0.500 | — | 0.458 | 0.41 | — |
+| &ensp;fraud† | 0.472 | 0.534 | — | **0.580** | 0.59 | — |
+| &ensp;industry | **8.5** | 6.9 | — | 6.5 | 14.0 | — |
+| JP Fin Harness | **54.2** | 31.6 | 48.5 | 49.6 | — | 49.1 |
 
-†ROC-AUC. All others are Accuracy (%). **Bold** indicates the best result among Compass phases. — indicates not evaluated.
+†ROC-AUC. All others are Accuracy (%). **Bold** indicates the best result among Compass phases. — indicates not evaluated. Phase 3 Stage 1 refers to the model after Stage 3-1 (text-based financial QA) only; Phase 3 Stage 2 is the final result after Stage 3-2 (VLM-based document reading).
+
+#### JP Fin Harness Per-Task Results
+
+| Task | Phase 1 | Phase 2 | Phase 3 Stage 1 | **Phase 3 Stage 2** |
+|------|:-------:|:-------:|:---------------:|:-------------------:|
+| chabsa | **0.9428** | 0.5818 | 0.9357 | 0.9356 |
+| cma_basics | **0.5526** | 0.2105 | 0.3947 | 0.3947 |
+| cpa_audit | 0.2261 | 0.1683 | **0.2487** | 0.2362 |
+| fp2 | **0.3389** | 0.1789 | 0.2863 | 0.2989 |
+| security_sales_1 | **0.6491** | 0.4386 | 0.5614 | 0.6140 |
+
+All tasks report Accuracy. **Bold** indicates the best result per task.
 
 Phase 2 reasoning enhancement improved GSM-8K from 64.6 to **73.2**, but significantly degraded financial task performance (JP Fin Harness: 54.2 → 31.6). Phase 3 domain specialization recovered financial performance to 49.6, demonstrating the effectiveness of the three-phase approach. Notably, the Phase 1 model already exhibited strong financial knowledge (JP Fin Harness: 54.2), likely due to financial content present in the government PDF documents used during training.
 
@@ -477,3 +487,7 @@ The financial documents used for dataset construction are publicly available mat
 [11] Zhang, Y., Zhang, K., & Liang, X. (2024). LLaVAR-2: Large Language and Vision Assistant for Arbitrary-Resolution Image Understanding. *arXiv:2412.16364*.
 
 [12] Zhang, Y., Zhang, R., Gu, J., Zhou, Y., Lipka, N., Yang, D., & Sun, T. (2023). LLaVAR: Enhanced Visual Instruction Tuning for Text-Rich Image Understanding. *arXiv:2306.17107*.
+
+[13] Sugiura, I., Ishida, T., Makino, T., Tazuke, C., Nakagawa, T., Nakago, K., & Ha, D. (2026). EDINET-Bench: Evaluating LLMs on Complex Financial Tasks using Japanese Financial Statements. *ICLR 2026*. arXiv:2506.08762.
+
+[14] Preferred Networks. japanese-lm-fin-harness. https://github.com/pfnet-research/japanese-lm-fin-harness

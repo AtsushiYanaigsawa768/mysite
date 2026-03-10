@@ -202,8 +202,6 @@ PDFページはレート制限付きで非同期にスクレイピングされ�
 | C | 中-難 | 金融公式の適用 | 文書データからROE、WACC、PERを計算 |
 | D | 難 | 多段階推論 | 約8ステップの推論を要する複雑な計算 |
 
-回答の整合性を確保するため、Jaccard類似度を用いたマルチイテレーション投票（デフォルト8回）を使用。
-
 **視覚処理：** PDFページはPyMuPDFを用いて**150 DPI**で画像にレンダリングされ、テキスト抽出をバイパスしてVLMに直接入力される。このアプローチは、JDocQAやEDINET_Benchなどのベンチマークが画像フォーマットの文書入力を使用する評価設定と一致する。
 
 **学習構成：** 視覚エンコーダは凍結。MLPプロジェクタとLLM（LoRA r=16、alpha=32経由）を更新。
@@ -292,7 +290,7 @@ Compassは全ての会話的インタラクションにllm-jp-4の指示フォ�
 
 ### EDINET Bench（金融文書分類）
 
-**EDINET Bench** はEDINET（金融商品取引法に基づく有価証券報告書等の開示書類に関する電子開示システム）の提出書類から導出された金融文書分類タスクのパフォーマンスを評価する：
+**EDINET Bench** [13] はEDINET（金融商品取引法に基づく有価証券報告書等の開示書類に関する電子開示システム）の提出書類から導出された金融文書分類タスクのパフォーマンスを評価する：
 
 | タスク | タイプ | 説明 | 概算サイズ |
 |--------|--------|------|-----------|
@@ -300,7 +298,7 @@ Compassは全ての会話的インタラクションにllm-jp-4の指示フォ�
 | earnings_forecast | 二値分類 | 業績方向の予測 | ~1,500 |
 | industry_prediction | 多クラス（16クラス）| 企業の業種分類 | ~800 |
 
-このベンチマークは実際の金融文書の理解と分類能力をテストし、Phase 3のドメイン特化の有効性を直接的に測定する。
+入力として、有価証券報告書から抽出したSummary（事業の概況）、BS（貸借対照表）、CF（キャッシュ・フロー計算書）、PL（損益計算書）の4セクションを使用する。このベンチマークは実際の金融文書の理解と分類能力をテストし、Phase 3のドメイン特化の有効性を直接的に測定する。
 
 ---
 
@@ -316,16 +314,28 @@ Compassは全ての会話的インタラクションにllm-jp-4の指示フォ�
 
 全タスクは**zero-shot**設定で評価した。以下の表に、各学習フェーズ終了時の性能と参考ベースラインを示す。
 
-| ベンチマーク | Phase 1 | Phase 2 | **Phase 3** | Llama-3.3-70B | Qwen-14B-Chat |
-|-------------|:-------:|:-------:|:-----------:|:-------------:|:-------------:|
-| GSM-8K | 64.6 | **73.2** | 71.9 | — | 59.3 |
-| *EDINET Bench* | | | | | |
-| &ensp;earnings† | 0.532 | 0.500 | 0.458 | 0.41 | — |
-| &ensp;fraud† | 0.472 | 0.534 | **0.580** | 0.59 | — |
-| &ensp;industry | **8.5** | 6.9 | 6.5 | 14.0 | — |
-| JP Fin Harness | **54.2** | 31.6 | 49.6 | — | 49.1 |
+| ベンチマーク | Phase 1 | Phase 2 | Phase 3 Stage 1 | **Phase 3 Stage 2** | Llama-3.3-70B [13] | Qwen-14B-Chat [14] |
+|-------------|:-------:|:-------:|:---------------:|:-------------------:|:-------------------:|:------------------:|
+| GSM-8K | 64.6 | **73.2** | — | 71.9 | — | 59.3 |
+| *EDINET Bench* | | | | | | |
+| &ensp;earnings† | 0.532 | 0.500 | — | 0.458 | 0.41 | — |
+| &ensp;fraud† | 0.472 | 0.534 | — | **0.580** | 0.59 | — |
+| &ensp;industry | **8.5** | 6.9 | — | 6.5 | 14.0 | — |
+| JP Fin Harness | **54.2** | 31.6 | 48.5 | 49.6 | — | 49.1 |
 
-†ROC-AUC。その他はAccuracy（%）。**太字**はCompassの各フェーズ中の最良結果。—は未評価。
+†ROC-AUC。その他はAccuracy（%）。**太字**はCompassの各フェーズ中の最良結果。—は未評価。Phase 3 Stage 1はStage 3-1（テキストベース金融QA）までの結果、Phase 3 Stage 2はStage 3-2（VLMベース文書読解）までの最終結果。
+
+#### JP Fin Harness タスク別結果
+
+| タスク | Phase 1 | Phase 2 | Phase 3 Stage 1 | **Phase 3 Stage 2** |
+|--------|:-------:|:-------:|:---------------:|:-------------------:|
+| chabsa | **0.9428** | 0.5818 | 0.9357 | 0.9356 |
+| cma_basics | **0.5526** | 0.2105 | 0.3947 | 0.3947 |
+| cpa_audit | 0.2261 | 0.1683 | **0.2487** | 0.2362 |
+| fp2 | **0.3389** | 0.1789 | 0.2863 | 0.2989 |
+| security_sales_1 | **0.6491** | 0.4386 | 0.5614 | 0.6140 |
+
+全タスクAccuracy。**太字**は各タスクの最良結果。
 
 Phase 2の推論強化によりGSM-8Kが64.6から**73.2**に向上した一方、金融タスクの性能が大幅に低下した（JP Fin Harness: 54.2 → 31.6）。Phase 3のドメイン特化により金融タスク性能が49.6まで回復し、三段階アプローチの有効性が示された。注目すべきは、Phase 1モデルが既に強い金融知識を示していた点（JP Fin Harness: 54.2）であり、これは学習に使用した官公庁PDF文書に金融関連の情報が含まれていたためと考えられる。
 
@@ -477,3 +487,7 @@ EDINET Benchの不正会計検出タスクでは、Phase 3終了後にROC-AUC 0.
 [11] Zhang, Y., Zhang, K., & Liang, X. (2024). LLaVAR-2: Large Language and Vision Assistant for Arbitrary-Resolution Image Understanding. *arXiv:2412.16364*.
 
 [12] Zhang, Y., Zhang, R., Gu, J., Zhou, Y., Lipka, N., Yang, D., & Sun, T. (2023). LLaVAR: Enhanced Visual Instruction Tuning for Text-Rich Image Understanding. *arXiv:2306.17107*.
+
+[13] Sugiura, I., Ishida, T., Makino, T., Tazuke, C., Nakagawa, T., Nakago, K., & Ha, D. (2026). EDINET-Bench: Evaluating LLMs on Complex Financial Tasks using Japanese Financial Statements. *ICLR 2026*. arXiv:2506.08762.
+
+[14] Preferred Networks. japanese-lm-fin-harness. https://github.com/pfnet-research/japanese-lm-fin-harness
