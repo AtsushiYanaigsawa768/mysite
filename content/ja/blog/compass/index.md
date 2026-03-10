@@ -13,8 +13,25 @@ tocSections:
   - "評価設定"
   - "実験結果"
   - "まとめと今後の展望"
+  - "謝辞"
   - "参考文献"
 ShowToc: true
+---
+
+> **GitHub リポジトリ:** [https://github.com/AtsushiYanaigsawa768/Compass](https://github.com/AtsushiYanaigsawa768/Compass)
+
+本プロジェクトは FT-LLM 2026 の自由課題として実施されたものである。
+
+**題目:** 推論強化と文書読解の統合による日本語金融VLMの開発
+(Development of a Japanese Financial VLM through Integration of Reasoning Enhancement and Document Comprehension)
+
+本研究は [柳澤 篤](https://atsushiyanaigsawa768.github.io/mysite/en/) と [柿本 源心](https://github.com/kakimoto0225) により実施された。
+
+学習結果および詳細な研究成果については、以下を参照されたい。
+- [HuggingFace Collection](https://huggingface.co/collections/Yana/compass)
+- [Blog (English)](https://atsushiyanaigsawa768.github.io/mysite/en/blog/compass/)
+- [Blog (日本語)](https://atsushiyanaigsawa768.github.io/mysite/ja/blog/compass/)
+
 ---
 
 ## はじめに
@@ -29,7 +46,7 @@ ShowToc: true
 
 - 視覚-言語アライメント、構造化された数学的推論、金融ドメイン専門知識を段階的に構築する**三段階学習パイプライン**。
 - Qwen3-30B-A3B-Thinking [2] からのXML構造化出力フォーマットを用いた**知識蒸留**により、約75万件の数学問題に対する段階的推論能力を獲得。
-- 日本政府PDF文書（内閣府、金融庁、財務省）からの**金融文書読解データセットの構築**。自動的な関連性フィルタリング、Qwen3-VL-32B/8Bによる多難易度の質問生成、及びマルチイテレーション投票による整合性検証を含む。
+- 日本政府PDF文書（内閣府、金融庁、財務省）からのPhase 1（OCRおよび視覚QAデータ）とPhase 3（多難易度の質問生成と整合性検証を含む金融ドメインQA）の両方における**文書理解データセットの構築**。これらのデータセットはHuggingFaceで公開されており、本研究の主要な貢献の一つである。
 - 150 DPIでレンダリングされた日本政府金融PDF文書に対する4段階の難易度の金融質問応答を用いた**直接的な視覚文書読解**。
 
 ## アーキテクチャ
@@ -38,7 +55,7 @@ CompassはLLaVA-OneVision [1] で確立された三要素VLMアーキテクチ�
 
 ### 視覚エンコーダ
 
-視覚エンコーダとして **SigLIP-v2 SO400M-patch14-384** [6] を採用する。本モデルは隠れ次元1,152の特徴表現を生成し、1クロップあたり729パッチ（384 x 384の入力解像度、パッチサイズ14から27 x 27の空間グリッド）を出力する。LLaVA-OneVisionの慣例に従い、最終層から2番目（layer -2）の特徴を抽出する。
+視覚エンコーダとして [**SigLIP-v2 SO400M-patch14-384**](https://huggingface.co/google/siglip2-so400m-patch14-384) [6] を採用する。本モデルは隠れ次元1,152の特徴表現を生成し、1画像あたり729パッチ（384 x 384の入力解像度、パッチサイズ14から27 x 27の空間グリッド）を出力する。LLaVA-OneVisionの慣例に従い、最終層から2番目（layer -2）の特徴を抽出する。
 
 ### MLPプロジェクタ
 
@@ -54,19 +71,20 @@ Linear(1152 → 4096) → GELU → Linear(4096 → 4096)
 
 言語バックボーンとして **llm-jp-4-8b** を採用する。これは隠れ次元4,096の80億パラメータ日本語言語モデルである。VicunaやLLaMAベースのモデルを使用するオリジナルのLLaVA-OneVisionからの重要な変更点であり、llm-jp-4-8bは日本語テキストコーパスに対する強力な事前学習により、日本語金融文書理解のより適切な基盤を提供する。
 
-### AnyRes-9 マルチ解像度処理
-
-高解像度の文書画像に対して、LLaVA-OneVisionのAnyRes-9戦略を採用する。各入力画像は1つのグローバルクロップ（全体レイアウトを捕捉）と最大8つのローカルクロップ（細部を捕捉）の組み合わせとして処理され、各クロップは384 x 384にリサイズされる。これにより1画像あたり合計729 x 9 = **6,561個の視覚トークン**が生成され、金融表における文書レベルの構造と文字レベルの詳細の両方を捕捉できる。AnyResはStage 1-1の事前学習では無効化され、Stage 1-2以降で有効化される。
-
 ### LLaVA-OneVisionとの主な違い
+
+LLaVA-OneVisionとは異なり、CompassはAnyResマルチ解像度処理戦略を**採用していない**。LLaVA-OneVisionがAnyRes-9（1つのグローバルクロップ + 最大8つのローカルクロップ、1画像あたり6,561視覚トークンを生成）を使用するのに対し、Compassは各入力画像を単一の384 x 384クロップとして処理し、**1画像あたり729視覚トークン**を生成する。この設計により計算コストを削減しつつ、文書理解タスクに十分な解像度を維持している。
 
 | 項目 | LLaVA-OneVision | Compass |
 |------|----------------|---------|
 | 言語モデル | Vicuna / LLaMA | llm-jp-4-8b |
 | チャットテンプレート | `USER:` / `ASSISTANT:` | `### 指示:` / `### 応答:` / `<\|eos\|>` |
+| マルチ解像度 | AnyRes-9（6,561トークン/画像）| 単一クロップ（729トークン/画像）|
 | Stage 1-1 エポック数 | 1 | 2（小規模データセットの補償: 330K vs 558K）|
 | Stage 1-2 LLM学習 | フルファインチューニング | LoRA（r=64, alpha=128）|
 | 実効バッチサイズ（Stage 1-1）| 256 | 128 |
+
+---
 
 ## 学習パイプライン
 
@@ -82,9 +100,11 @@ Linear(1152 → 4096) → GELU → Linear(4096 → 4096)
 
 **凍結** = パラメータ固定、**学習** = パラメータ更新、**—** = モジュール不使用
 
+---
+
 ### Phase 1: 基盤VLM構築
 
-Phase 1では、基本的な視覚-言語アライメントと視覚指示理解能力を確立する。
+Phase 1では、基本的な視覚-言語アライメントと視覚指示理解能力を確立する。データセット作成の詳細な手順については、リポジトリの [Phase 1 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase1) を参照されたい。
 
 #### Stage 1-1: キャプション・OCR事前学習
 
@@ -93,31 +113,33 @@ Phase 1では、基本的な視覚-言語アライメントと視覚指示理解
 **学習構成：** MLPプロジェクタのみ更新。視覚エンコーダと言語モデルは凍結。
 
 **データセット：**
-- **STAIR Captions** [3]：約33万件の日本語画像-キャプションペア（license_id=4でフィルタリング）。各画像に5つのキャプションが付与されており、各学習エポックでランダムに1つのキャプションを選択することでデータの多様性を増加。
-- **OCRデータセット：** Qwen3-VL-32Bを用いて4種類のOCRプロンプトで日本政府PDF文書から生成。本データセットにより、モデルは文書画像からテキストを読み取る能力を獲得する。
+- **STAIR Captions** ([shunk031/STAIR-Captions](https://huggingface.co/datasets/shunk031/STAIR-Captions)) [3]：約33万件の日本語画像-キャプションペア（license_id=4でフィルタリング）。各画像に5つのキャプションが付与されており、各学習エポックでランダムに1つのキャプションを選択することでデータの多様性を増加。
+- **OCRデータセット** ([Yana/ft-llm-2026-ocr-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-ocr-dataset))：LLaVAR [12] を参考に、Qwen3-VL-32Bを用いて4種類のOCRプロンプトで日本政府PDF文書から生成。本データセットにより、モデルは文書画像からテキストを読み取る能力を獲得する。**本研究で構築したデータセット。**
 
 **学習プロンプト：** 各サンプルはキャプションデータに対して指示文 `"この画像を端的に説明してください。"` を使用し、対応するキャプションを目標応答とする。
 
-**ハイパーパラメータ：** 学習率1e-3、AdamWオプティマイザ、3%ウォームアップ付きコサイン学習率スケジューラ、実効バッチサイズ128（デバイスあたりバッチサイズ2、勾配累積64）、2エポック、最大系列長2,048、bf16混合精度。損失関数は応答トークンのみに対する因果言語モデリング交差エントロピー。
+**ハイパーパラメータ：** 学習率1e-3、AdamWオプティマイザ、3%ウォームアップ付きコサイン学習率スケジューラ、実効バッチサイズ128（デバイスあたりバッチサイズ2、勾配累積64）、2エポック、最大系列長2,048、bf16混合精度。損失関数は応答トークンのみに対する交差エントロピー損失（次トークン予測）。
 
 #### Stage 1-2: 視覚指示チューニング
 
 本ステージでは、三つの全コンポーネントを訓練することで、モデルの視覚指示理解・追従能力を獲得する。
 
-**学習構成：** 視覚エンコーダ、MLPプロジェクタ、言語モデル（LoRA経由）の全てを更新。視覚エンコーダは事前学習済み視覚特徴を保持するため低い学習率2e-6を使用し、プロジェクタとLLM LoRAは2e-5を使用。AnyRes-9が有効化され、1画像あたり6,561トークンを生成。
+**学習構成：** 視覚エンコーダ、MLPプロジェクタ、言語モデル（LoRA経由）の全てを更新。視覚エンコーダは事前学習済み視覚特徴を保持するため低い学習率2e-6を使用し、プロジェクタとLLM LoRAは2e-5を使用。
 
 **データセット：**
-- **QAデータセット：** Qwen3-VLによる二段階プロセスで生成されたQAペア。まず抽出型QA（De）、次に推論型QA（Dr）を、政府PDF文書のページから生成。
-- **ja-vg-vqa-conversation：** Visual Genome画像に基づく約9万件のマルチターン視覚質問応答会話。
-- **SakanaAI JA-VG-VQA-500：** 約1,500件の高品質日本語VQAサンプル。
+- **QAデータセット** ([Yana/ft-llm-2026-qa-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-qa-dataset))：Qwen3-VLによる二段階プロセスで生成されたQAペア。まず抽出型QA（De）、次に推論型QA（Dr）を、政府PDF文書のページから生成。フォーマットはLLaVAR-2 [11] を参考にした。**本研究で構築したデータセット。**
+- **ja-vg-vqa-conversation** ([llm-jp/ja-vg-vqa-conversation](https://huggingface.co/datasets/llm-jp/ja-vg-vqa-conversation))：Visual Genome画像に基づく約9万件のマルチターン視覚質問応答会話。
+- **SakanaAI JA-VG-VQA-500** ([SakanaAI/JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500))：約1,500件の高品質日本語VQAサンプル。
 
-**LoRA構成：** ランクr=64、alpha=128、言語モデルに適用。AnyResによるトークン数増加に伴うメモリ消費を管理するため、勾配チェックポインティングを有効化。
+**LoRA構成：** ランクr=64、alpha=128、言語モデルに適用。メモリ消費を管理するため、gradient checkpointingを有効化。
 
 **ハイパーパラメータ：** 実効バッチサイズ256、1エポック、最大系列長2,048、bf16混合精度。
 
+---
+
 ### Phase 2: 推論強化
 
-Phase 2では、金融数値分析に不可欠な数学的推論能力を強化する。本フェーズは言語モデルのみの操作であり（テキストのみの学習、視覚コンポーネントなし）。
+Phase 2では、金融数値分析に不可欠な数学的推論能力を強化する。本フェーズは言語モデルのみの操作であり（テキストのみの学習、視覚コンポーネントなし）。データセット作成の詳細な手順については、リポジトリの [Phase 2 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase2) を参照されたい。
 
 #### 2.1 SFT: 構造化推論のための知識蒸留
 
@@ -125,7 +147,7 @@ Phase 2では、金融数値分析に不可欠な数学的推論能力を強化�
 
 **教師モデル：** Qwen3-30B-A3B-Thinking。強力な数学的推論能力を持つMixture-of-Experts（MoE）モデル。
 
-**データセット：** 11種類の数学データセットから収集された約75万件の数学問題。教師モデルが構造化XMLフォーマットで解答を生成。
+**データセット** ([Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft))：11種類の数学データセットから収集された約75万件の数学問題。教師モデルが構造化XMLフォーマットで解答を生成。**本研究で構築したデータセット。**
 
 **出力フォーマット：** 問題理解、推論、最終解答を明示的に分離する構造化XMLフォーマットで応答を生成するよう訓練する：
 
@@ -141,9 +163,11 @@ Phase 2では、金融数値分析に不可欠な数学的推論能力を強化�
 
 **ハイパーパラメータ：** 学習率2e-4、グローバルバッチサイズ64（マイクロバッチ2、勾配累積は64 / (2 x GPU数)で自動計算）、1エポック、最大系列長2,048、bf16混合精度。
 
+---
+
 ### Phase 3: ドメイン特化
 
-Phase 3では、テキストベースの金融QAと直接的な視覚文書読解の二つの相補的アプローチにより、モデルを金融ドメインに適応させる。
+Phase 3では、テキストベースの金融QAと直接的な視覚文書読解の二つの相補的アプローチにより、モデルを金融ドメインに適応させる。データセット作成の詳細な手順については、リポジトリの [Phase 3 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase3) を参照されたい。
 
 #### 3.1 テキストベース金融QA
 
@@ -166,7 +190,7 @@ Phase 3では、テキストベースの金融QAと直接的な視覚文書読�
 
 **中核仮説：** 実際の文書画像を処理することで、テキストのみの学習よりも深い文脈理解が得られる。モデルは表のフォーマット、グラフのレイアウト、文書構造などの視覚的手がかりを活用でき、これらはテキスト抽出では失われる。
 
-**データソース：** 以下の3つの日本政府機関の金融文書：
+**データソース** ([Yana/ft-llm-2026-domain-specific-qa](https://huggingface.co/datasets/Yana/ft-llm-2026-domain-specific-qa))：以下の3つの日本政府機関の金融文書。**本研究で構築したデータセットであり、本研究の主要な貢献の一つである：**
 - 内閣府
 - 金融庁
 - 財務省
@@ -190,22 +214,28 @@ PDFページはレート制限付きで非同期にスクレイピングされ�
 
 **ハイパーパラメータ：** 学習率2e-5、実効バッチサイズ16（デバイスあたりバッチサイズ2、勾配累積8）、3エポック、最大系列長2,048、bf16混合精度。
 
+---
+
 ## データセット
 
 三段階の学習パイプラインで使用された全データセットを以下にまとめる：
 
 | フェーズ | ステージ | データタイプ | 概算サイズ | ソース |
 |----------|----------|-------------|-----------|--------|
-| 1 | 1-1 | 画像キャプション | ~330K | STAIR Captions [3]（license_id=4、5キャプション/画像）|
-| 1 | 1-1 | OCR | 生成 | 政府PDF + Qwen3-VL-32B（4種類のプロンプト）|
-| 1 | 1-2 | VQA（抽出型+推論型）| 生成 | 政府PDF + Qwen3-VL二段階QA |
-| 1 | 1-2 | VQA（マルチターン）| ~90K | ja-vg-vqa-conversation |
-| 1 | 1-2 | VQA（高品質）| ~1.5K | SakanaAI JA-VG-VQA-500 |
-| 2 | SFT | 数学（構造化推論）| ~750K | 11数学データセット via Qwen3-30B-A3B-Thinking |
+| 1 | 1-1 | 画像キャプション | ~330K | [STAIR Captions](https://huggingface.co/datasets/shunk031/STAIR-Captions) [3]（license_id=4、5キャプション/画像）|
+| 1 | 1-1 | OCR | 生成 | [Yana/ft-llm-2026-ocr-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-ocr-dataset) ★ |
+| 1 | 1-2 | VQA（抽出型+推論型）| 生成 | [Yana/ft-llm-2026-qa-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-qa-dataset) ★ |
+| 1 | 1-2 | VQA（マルチターン）| ~90K | [ja-vg-vqa-conversation](https://huggingface.co/datasets/llm-jp/ja-vg-vqa-conversation) |
+| 1 | 1-2 | VQA（高品質）| ~1.5K | [SakanaAI JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500) |
+| 2 | SFT | 数学（構造化推論）| ~750K | [Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft) ★ |
 | 3 | 3-1 | 金融QA（会話型）| ~3.6K | ConvFinQA [4] |
 | 3 | 3-1 | 金融QA（数値推論）| ~8K | FinQA [5] |
 | 3 | 3-1 | 金融QA（ハイブリッド）| ~16.5K | TAT-QA [8] |
-| 3 | 3-2 | ドメインQA（視覚）| ~32K | 政府PDF（内閣府、金融庁、財務省）|
+| 3 | 3-2 | ドメインQA（視覚）| ~32K | [Yana/ft-llm-2026-domain-specific-qa](https://huggingface.co/datasets/Yana/ft-llm-2026-domain-specific-qa) ★ |
+
+★ = 本研究で構築したデータセット
+
+---
 
 ## 実装の詳細
 
@@ -237,22 +267,10 @@ Compassは全ての会話的インタラクションにllm-jp-4の指示フォ�
 | 3 | テキストQA | 16 | 3 | 2e-5 | 2,048 | r=16, alpha=32 | bf16 |
 | 3 | ドメインQA | 16 | 3 | 2e-5 | 2,048 | r=16, alpha=32 | bf16 |
 
-全フェーズでAdamWオプティマイザとウォームアップ付きコサイン学習率スケジューリングを使用。メモリ集約的なステージでは勾配チェックポインティングを有効化。
+全フェーズでAdamWオプティマイザとウォームアップ付きコサイン学習率スケジューリングを使用。メモリ集約的なステージではgradient checkpointingを有効化。
 
-### ハードウェア
 
-全ての学習は、産業技術総合研究所（AIST）が運用する **ABCI 3.0**（AI橋渡しクラウド基盤）上で実施。具体的な構成：
-- Phase 1: H100 80GB x 1
-- Phase 2: A100 40GB x 4（QLoRAにより小規模GPUでの学習が可能）
-- Phase 3: データセットサイズに応じてGPU 1～8基
-
-分散学習はPyTorch DDP（DistributedDataParallel）を`torchrun`経由で使用し、ランクとワールドサイズの自動検出を行う。
-
-### 学習基盤
-
-- **チェックポイント/再開：** 全学習スクリプトは最新チェックポイントからの自動再開をサポートし、共有計算基盤での中断からの復旧を可能にする。
-- **ロギング：** 外部サービス（W&B、TensorBoard等）に依存しない、ローカルCSVメトリクスロギングとmatplotlib可視化ダッシュボード。
-- **アダプタマージ：** Phase 2終了後、Phase 3に進む前に専用マージスクリプトを用いてLoRAアダプタをベースモデルにマージ。
+---
 
 ## 評価設定
 
@@ -287,6 +305,8 @@ Compassは全ての会話的インタラクションにllm-jp-4の指示フォ�
 | industry_prediction | 多クラス（16クラス）| 企業の業種分類 | ~800 |
 
 このベンチマークは実際の金融文書の理解と分類能力をテストし、Phase 3のドメイン特化の有効性を直接的に測定する。
+
+---
 
 ## 実験結果
 
@@ -428,9 +448,13 @@ Final meal: 60 - 40 = 20 cups.
 
 Phase 2の推論強化により数学的推論が明確に向上し（GSM-8K: 64.6 → 73.2）、Phase 3のドメイン特化によりPhase 2で低下した金融タスク性能が回復した（JP Fin Harness: 31.6 → 49.6）。Phase 1モデルの強い初期的な金融性能（54.2）は、OCR・QAデータ生成に使用した官公庁PDF文書が既に十分な金融知識を含んでいることを示唆しており、この知識はPhase 2のテキストのみの推論学習で部分的に上書きされ、Phase 3の金融ファインチューニングで回復されたと考えられる。
 
-EDINET Benchの不正会計検出タスクでは、Phase 3終了後にROC-AUC 0.580を達成し、8Bパラメータのモデルでありながらもが上位のベースライン（Llama-3.3-70B: 0.59）に迫る結果となった。しかし、業種分類タスクは依然として困難（最良で8.5% vs. Llama-3.3-70Bの14.0%）であり、金融文書に対する多クラス分類の改善の余地がある。
+EDINET Benchの不正会計検出タスクでは、Phase 3終了後にROC-AUC 0.580を達成し、8Bパラメータのモデルでありながらも上位のベースライン（Llama-3.3-70B: 0.59）に迫る結果となった。しかし、業種分類タスクは依然として困難（最良で8.5% vs. Llama-3.3-70Bの14.0%）であり、金融文書に対する多クラス分類の改善の余地がある。
 
 現行モデルの主要なアーキテクチャ上の制約は、1回の推論で**1画像のみ**を処理することである。実際の金融分析では、有価証券報告書内の複数ページの相互参照や異なる文書間での数値比較が頻繁に必要となる。Compassを**マルチ画像入力**に対応させることは、金融文書分析ワークフローにおける実用的なデプロイメントを実現するための重要な今後の方向性である。
+
+## 謝辞
+
+データセット作成に使用した金融文書は、財務省、金融庁および内閣府が公開する資料であり、公共データ利用規約（PDL-1.0）に基づき利用した。計算資源として、産総研およびAIST Solutionsが提供するABCI 3.0を利用した。
 
 ## 参考文献
 
@@ -453,3 +477,7 @@ EDINET Benchの不正会計検出タスクでは、Phase 3終了後にROC-AUC 0.
 [9] Cobbe, K., Kosaraju, V., Bavarian, M., Chen, M., Jun, H., Kaiser, L., Plappert, M., Tworek, J., Hilton, J., Nakano, R., Hesse, C., & Schulman, J. (2021). Training Verifiers to Solve Math Word Problems. *arXiv:2110.14168*.
 
 [10] Hu, E. J., Shen, Y., Wallis, P., Allen-Zhu, Z., Li, Y., Wang, S., Wang, L., & Chen, W. (2022). LoRA: Low-Rank Adaptation of Large Language Models. *ICLR 2022*.
+
+[11] Zhang, Y., Zhang, K., & Liang, X. (2024). LLaVAR-2: Large Language and Vision Assistant for Arbitrary-Resolution Image Understanding. *arXiv:2412.16364*.
+
+[12] Zhang, Y., Zhang, R., Gu, J., Zhou, Y., Lipka, N., Yang, D., & Sun, T. (2023). LLaVAR: Enhanced Visual Instruction Tuning for Text-Rich Image Understanding. *arXiv:2306.17107*.

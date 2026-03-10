@@ -13,8 +13,24 @@ tocSections:
   - "Evaluation Setup"
   - "Experimental Results"
   - "Conclusion and Future Work"
+  - "Acknowledgments"
   - "References"
 ShowToc: true
+---
+
+> **GitHub Repository:** [https://github.com/AtsushiYanaigsawa768/Compass](https://github.com/AtsushiYanaigsawa768/Compass)
+
+This project was conducted as part of the free-form task of FT-LLM 2026.
+
+**Title:** Development of a Japanese Financial VLM through Integration of Reasoning Enhancement and Document Comprehension
+
+This research was carried out by [Atsushi Yanagisawa](https://atsushiyanaigsawa768.github.io/mysite/en/) and [Genshin Kakimoto](https://github.com/kakimoto0225).
+
+For training results and detailed research findings, please refer to the links below.
+- [HuggingFace Collection](https://huggingface.co/collections/Yana/compass)
+- [Blog (English)](https://atsushiyanaigsawa768.github.io/mysite/en/blog/compass/)
+- [Blog (日本語)](https://atsushiyanaigsawa768.github.io/mysite/ja/blog/compass/)
+
 ---
 
 ## Introduction
@@ -29,7 +45,7 @@ Our main contributions are:
 
 - A **three-phase training pipeline** that progressively builds vision-language alignment, structured mathematical reasoning, and financial domain expertise.
 - **Knowledge distillation** from Qwen3-30B-A3B-Thinking [2] using XML-structured output format, enabling structured step-by-step reasoning over approximately 750K mathematical problems.
-- **Construction of a financial document reading dataset** from Japanese government PDFs (Cabinet Office, FSA, MOF), with automated relevance filtering, multi-difficulty question generation by Qwen3-VL-32B/8B, and consistency verification via multi-iteration voting.
+- **Construction of document understanding datasets** from Japanese government PDF documents (Cabinet Office, FSA, MOF) for both Phase 1 (OCR and visual QA data) and Phase 3 (financial domain QA with multi-difficulty questions and consistency verification). These datasets are publicly available on HuggingFace and represent a major contribution of this work.
 - **Direct visual document reading** of Japanese government financial PDFs rendered at 150 DPI, covering four difficulty levels of financial question answering.
 
 ## Architecture
@@ -38,7 +54,7 @@ Compass follows the three-component VLM architecture established by LLaVA-OneVis
 
 ### Vision Encoder
 
-We employ **SigLIP-v2 SO400M-patch14-384** [6] as the vision encoder. This model produces feature representations with a hidden dimension of 1,152 and generates 729 patches per crop (27 x 27 spatial grid from 384 x 384 input resolution at patch size 14). We extract features from the second-to-last layer (layer -2), following the convention established in LLaVA-OneVision.
+We employ [**SigLIP-v2 SO400M-patch14-384**](https://huggingface.co/google/siglip2-so400m-patch14-384) [6] as the vision encoder. This model produces feature representations with a hidden dimension of 1,152 and generates 729 patches per image (27 x 27 spatial grid from 384 x 384 input resolution at patch size 14). We extract features from the second-to-last layer (layer -2), following the convention established in LLaVA-OneVision.
 
 ### MLP Projector
 
@@ -54,19 +70,20 @@ All weights are initialized using Xavier uniform initialization with gain 1.0. T
 
 We use **llm-jp-4-8b** as the language backbone, an 8-billion-parameter Japanese language model with a hidden dimension of 4,096. This is a key departure from the original LLaVA-OneVision, which uses Vicuna or LLaMA-based models. The choice of llm-jp-4-8b is motivated by its strong pre-training on Japanese text corpora, which provides a more suitable foundation for Japanese financial document understanding.
 
-### AnyRes-9 Multi-Resolution Processing
-
-For high-resolution document images, we adopt the AnyRes-9 strategy from LLaVA-OneVision. Each input image is processed as a combination of 1 global crop (capturing the overall layout) and up to 8 local crops (capturing fine-grained details), where each crop is resized to 384 x 384. This produces a total of 729 x 9 = **6,561 vision tokens per image**, enabling the model to capture both document-level structure and character-level details in financial tables. AnyRes is disabled during Stage 1-1 pre-training and enabled from Stage 1-2 onward.
-
 ### Key Differences from LLaVA-OneVision
+
+Unlike LLaVA-OneVision, Compass does **not** adopt the AnyRes multi-resolution processing strategy. While LLaVA-OneVision uses AnyRes-9 (1 global crop + up to 8 local crops, producing 6,561 vision tokens per image), Compass processes each input image as a single 384 x 384 crop, producing **729 vision tokens per image**. This design choice reduces computational cost while maintaining sufficient resolution for document understanding tasks.
 
 | Aspect | LLaVA-OneVision | Compass |
 |--------|----------------|---------|
 | Language Model | Vicuna / LLaMA | llm-jp-4-8b |
 | Chat Template | `USER:` / `ASSISTANT:` | `### 指示:` / `### 応答:` / `<\|eos\|>` |
+| Multi-Resolution | AnyRes-9 (6,561 tokens/image) | Single crop (729 tokens/image) |
 | Stage 1-1 Epochs | 1 | 2 (compensating for smaller dataset: 330K vs 558K) |
 | Stage 1-2 LLM Training | Full fine-tuning | LoRA (r=64, alpha=128) |
 | Effective Batch (Stage 1-1) | 256 | 128 |
+
+---
 
 ## Training Pipeline
 
@@ -82,9 +99,11 @@ Our training pipeline consists of three phases, each designed to build upon the 
 
 **Frozen** = parameters fixed; **Train** = parameters updated; **—** = module not used.
 
+---
+
 ### Phase 1: Foundation VLM Development
 
-Phase 1 establishes the fundamental vision-language alignment and visual instruction-following capability.
+Phase 1 establishes the fundamental vision-language alignment and visual instruction-following capability. For detailed dataset creation procedures, see the [Phase 1 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase1) in the repository.
 
 #### Stage 1-1: Caption and OCR Pre-training
 
@@ -93,31 +112,33 @@ The objective of this stage is to establish basic vision-language correspondence
 **Training configuration:** Only the MLP projector is updated; both the vision encoder and language model remain frozen.
 
 **Datasets:**
-- **STAIR Captions** [3]: Approximately 330K Japanese image-caption pairs (filtered to license_id=4). Each image has 5 associated captions, and we randomly sample one caption per image during each training epoch to increase data diversity.
-- **OCR Dataset**: Generated from Japanese government PDF documents using Qwen3-VL-32B with 4 types of OCR prompts. This dataset teaches the model to read text from document images.
+- **STAIR Captions** ([shunk031/STAIR-Captions](https://huggingface.co/datasets/shunk031/STAIR-Captions)) [3]: Approximately 330K Japanese image-caption pairs (filtered to license_id=4). Each image has 5 associated captions, and we randomly sample one caption per image during each training epoch to increase data diversity.
+- **OCR Dataset** ([Yana/ft-llm-2026-ocr-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-ocr-dataset)): Generated from Japanese government PDF documents using Qwen3-VL-32B with 4 types of OCR prompts, inspired by LLaVAR [12]. This dataset teaches the model to read text from document images. **This dataset was constructed as part of this research.**
 
 **Training prompt:** Each sample uses the instruction `"この画像を端的に説明してください。"` (Describe this image briefly.) for caption data, with the corresponding caption as the target response.
 
-**Hyperparameters:** Learning rate 1e-3 with AdamW optimizer, cosine learning rate scheduler with 3% warmup, effective batch size 128 (per-device batch 2, gradient accumulation 64), 2 epochs, maximum sequence length 2,048, bf16 mixed precision. The loss function is causal language modeling cross-entropy, computed only over response tokens.
+**Hyperparameters:** Learning rate 1e-3 with AdamW optimizer, cosine learning rate scheduler with 3% warmup, effective batch size 128 (per-device batch 2, gradient accumulation 64), 2 epochs, maximum sequence length 2,048, bf16 mixed precision. The loss function is cross-entropy loss (next-token prediction), computed only over response tokens.
 
 #### Stage 1-2: Visual Instruction Tuning
 
 This stage enables the model to understand and follow visual instructions by training all three components.
 
-**Training configuration:** The vision encoder, MLP projector, and language model (via LoRA) are all updated. The vision encoder uses a reduced learning rate of 2e-6 to preserve pre-trained visual features, while the projector and LLM LoRA use 2e-5. AnyRes-9 is enabled, producing 6,561 tokens per image.
+**Training configuration:** The vision encoder, MLP projector, and language model (via LoRA) are all updated. The vision encoder uses a reduced learning rate of 2e-6 to preserve pre-trained visual features, while the projector and LLM LoRA use 2e-5.
 
 **Datasets:**
-- **QA Dataset**: Question-answer pairs generated by Qwen3-VL using a two-stage process: first extractive QA (De), then reasoning QA (Dr), from government PDF pages.
-- **ja-vg-vqa-conversation**: Approximately 90K multi-turn visual question answering conversations based on Visual Genome images.
-- **SakanaAI JA-VG-VQA-500**: Approximately 1,500 high-quality Japanese VQA samples.
+- **QA Dataset** ([Yana/ft-llm-2026-qa-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-qa-dataset)): Question-answer pairs generated by Qwen3-VL using a two-stage process: first extractive QA (De), then reasoning QA (Dr), from government PDF pages. The format was inspired by LLaVAR-2 [11]. **This dataset was constructed as part of this research.**
+- **ja-vg-vqa-conversation** ([llm-jp/ja-vg-vqa-conversation](https://huggingface.co/datasets/llm-jp/ja-vg-vqa-conversation)): Approximately 90K multi-turn visual question answering conversations based on Visual Genome images.
+- **SakanaAI JA-VG-VQA-500** ([SakanaAI/JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)): Approximately 1,500 high-quality Japanese VQA samples.
 
-**LoRA configuration:** Rank r=64, alpha=128, applied to the language model. Gradient checkpointing is enabled to manage memory consumption with the increased token count from AnyRes.
+**LoRA configuration:** Rank r=64, alpha=128, applied to the language model. Gradient checkpointing is enabled to manage memory consumption.
 
 **Hyperparameters:** Effective batch size 256, 1 epoch, maximum sequence length 2,048, bf16 mixed precision.
 
+---
+
 ### Phase 2: Reasoning Enhancement
 
-Phase 2 strengthens the model's mathematical reasoning capability, which is critical for financial numerical analysis. This phase operates on the language model only (text-only training, no vision components).
+Phase 2 strengthens the model's mathematical reasoning capability, which is critical for financial numerical analysis. This phase operates on the language model only (text-only training, no vision components). For detailed dataset creation procedures, see the [Phase 2 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase2) in the repository.
 
 #### 2.1 SFT: Knowledge Distillation for Structured Reasoning
 
@@ -125,7 +146,7 @@ We distill structured reasoning capability from a stronger teacher model into Co
 
 **Teacher model:** Qwen3-30B-A3B-Thinking, a Mixture-of-Experts (MoE) model with strong mathematical reasoning capability.
 
-**Dataset:** Approximately 750K mathematical problems drawn from 11 diverse math datasets, with teacher-generated solutions in a structured XML format.
+**Dataset** ([Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft)): Approximately 750K mathematical problems drawn from 11 diverse math datasets, with teacher-generated solutions in a structured XML format. **This dataset was constructed as part of this research.**
 
 **Output format:** We train the model to produce responses in a structured XML format that separates problem understanding, reasoning, and final answer:
 
@@ -141,9 +162,11 @@ This structured format explicitly decomposes the reasoning process, making it ea
 
 **Hyperparameters:** Learning rate 2e-4, global batch size 64 (micro batch 2, gradient accumulation auto-calculated as 64 / (2 x num_gpus)), 1 epoch, maximum sequence length 2,048, bf16 mixed precision.
 
+---
+
 ### Phase 3: Domain Specialization
 
-Phase 3 adapts the model to the financial domain through two complementary approaches: text-based financial QA and direct visual document reading.
+Phase 3 adapts the model to the financial domain through two complementary approaches: text-based financial QA and direct visual document reading. For detailed dataset creation procedures, see the [Phase 3 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase3) in the repository.
 
 #### 3.1 Text-Based Financial QA
 
@@ -166,7 +189,7 @@ The final stage integrates visual document understanding with domain expertise b
 
 **Core hypothesis:** Processing actual document images yields deeper contextual understanding than text-only learning, as the model can leverage visual cues such as table formatting, graph layouts, and document structure that are lost in text extraction.
 
-**Data source:** Financial documents from three Japanese government agencies:
+**Data source** ([Yana/ft-llm-2026-domain-specific-qa](https://huggingface.co/datasets/Yana/ft-llm-2026-domain-specific-qa)): Financial documents from three Japanese government agencies. **This dataset was constructed as part of this research and represents a major contribution of this work:**
 - Cabinet Office (内閣府)
 - Financial Services Agency (金融庁)
 - Ministry of Finance (財務省)
@@ -190,22 +213,28 @@ Multi-iteration voting (8 iterations by default) with Jaccard similarity is used
 
 **Hyperparameters:** Learning rate 2e-5, effective batch size 16 (per-device batch 2, gradient accumulation 8), 3 epochs, maximum sequence length 2,048, bf16 mixed precision.
 
+---
+
 ## Datasets
 
 The following table summarizes all datasets used across the three training phases:
 
 | Phase | Stage | Data Type | Approximate Size | Source |
 |-------|-------|-----------|-----------------|--------|
-| 1 | 1-1 | Image Captions | ~330K | STAIR Captions [3] (license_id=4, 5 captions/image) |
-| 1 | 1-1 | OCR | Generated | Government PDFs + Qwen3-VL-32B (4 prompt types) |
-| 1 | 1-2 | VQA (extractive + reasoning) | Generated | Government PDFs + Qwen3-VL two-stage QA |
-| 1 | 1-2 | VQA (multi-turn) | ~90K | ja-vg-vqa-conversation |
-| 1 | 1-2 | VQA (high-quality) | ~1.5K | SakanaAI JA-VG-VQA-500 |
-| 2 | SFT | Math (structured reasoning) | ~750K | 11 math datasets via Qwen3-30B-A3B-Thinking |
+| 1 | 1-1 | Image Captions | ~330K | [STAIR Captions](https://huggingface.co/datasets/shunk031/STAIR-Captions) [3] (license_id=4, 5 captions/image) |
+| 1 | 1-1 | OCR | Generated | [Yana/ft-llm-2026-ocr-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-ocr-dataset) ★ |
+| 1 | 1-2 | VQA (extractive + reasoning) | Generated | [Yana/ft-llm-2026-qa-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-qa-dataset) ★ |
+| 1 | 1-2 | VQA (multi-turn) | ~90K | [ja-vg-vqa-conversation](https://huggingface.co/datasets/llm-jp/ja-vg-vqa-conversation) |
+| 1 | 1-2 | VQA (high-quality) | ~1.5K | [SakanaAI JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500) |
+| 2 | SFT | Math (structured reasoning) | ~750K | [Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft) ★ |
 | 3 | 3-1 | Financial QA (conversational) | ~3.6K | ConvFinQA [4] |
 | 3 | 3-1 | Financial QA (numerical) | ~8K | FinQA [5] |
 | 3 | 3-1 | Financial QA (hybrid) | ~16.5K | TAT-QA [8] |
-| 3 | 3-2 | Domain QA (visual) | ~32K | Government PDFs (Cabinet Office, FSA, MOF) |
+| 3 | 3-2 | Domain QA (visual) | ~32K | [Yana/ft-llm-2026-domain-specific-qa](https://huggingface.co/datasets/Yana/ft-llm-2026-domain-specific-qa) ★ |
+
+★ = Dataset constructed as part of this research.
+
+---
 
 ## Implementation Details
 
@@ -239,20 +268,8 @@ For vision inputs, the `<image>` token serves as a placeholder that is replaced 
 
 All phases use AdamW optimizer with cosine learning rate scheduling and warmup. Gradient checkpointing is enabled for memory-intensive stages.
 
-### Hardware
 
-All training is conducted on **ABCI 3.0** (AI Bridging Cloud Infrastructure) operated by the National Institute of Advanced Industrial Science and Technology (AIST). Specific configurations:
-- Phase 1: 1x H100 80GB
-- Phase 2: 4x A100 40GB (QLoRA enables training on smaller GPUs)
-- Phase 3: 1-8x GPUs depending on dataset size
-
-Distributed training uses PyTorch DDP (DistributedDataParallel) via `torchrun` with automatic rank and world size detection.
-
-### Training Infrastructure
-
-- **Checkpoint/Resume:** All training scripts support automatic resume from the latest checkpoint, enabling recovery from interruptions on shared computing infrastructure.
-- **Logging:** Local CSV metrics logging with matplotlib visualization dashboards, without dependency on external services (e.g., W&B, TensorBoard).
-- **Adapter Merging:** After Phase 2, LoRA adapters are merged into the base model using a dedicated merge script before proceeding to Phase 3.
+---
 
 ## Evaluation Setup
 
@@ -287,6 +304,8 @@ Evaluation metrics include accuracy across all tasks and macro F1 for the chabsa
 | industry_prediction | Multi-class (16 classes) | Classifying company industry sector | ~800 |
 
 This benchmark tests the model's ability to understand and classify real financial documents, directly measuring the effectiveness of Phase 3 domain specialization.
+
+---
 
 ## Experimental Results
 
@@ -432,6 +451,10 @@ For the EDINET Bench fraud detection task, Compass achieved an ROC-AUC of 0.580 
 
 A key architectural limitation of the current model is that it processes only **one image per inference call**. Real-world financial analysis frequently requires cross-referencing multiple pages within a securities report or comparing figures across different documents. Extending Compass to support **multi-image input** is a critical direction for future work to enable practical deployment in financial document analysis workflows.
 
+## Acknowledgments
+
+The financial documents used for dataset construction are publicly available materials from the Ministry of Finance (MOF), the Financial Services Agency (FSA), and the Cabinet Office, and were used in accordance with the Government of Japan Standard Terms of Use (PDL-1.0). Computational resources were provided by ABCI 3.0, operated by the National Institute of Advanced Industrial Science and Technology (AIST) and AIST Solutions.
+
 ## References
 
 [1] Li, B., Zhang, Y., Guo, D., Zhang, R., Li, F., Zhang, H., Zhang, Y., Bao, Y., Li, Z., Cui, C., & Li, Y. (2024). LLaVA-OneVision: Easy Visual Task Transfer. *NeurIPS 2024*.
@@ -453,3 +476,7 @@ A key architectural limitation of the current model is that it processes only **
 [9] Cobbe, K., Kosaraju, V., Bavarian, M., Chen, M., Jun, H., Kaiser, L., Plappert, M., Tworek, J., Hilton, J., Nakano, R., Hesse, C., & Schulman, J. (2021). Training Verifiers to Solve Math Word Problems. *arXiv:2110.14168*.
 
 [10] Hu, E. J., Shen, Y., Wallis, P., Allen-Zhu, Z., Li, Y., Wang, S., Wang, L., & Chen, W. (2022). LoRA: Low-Rank Adaptation of Large Language Models. *ICLR 2022*.
+
+[11] Zhang, Y., Zhang, K., & Liang, X. (2024). LLaVAR-2: Large Language and Vision Assistant for Arbitrary-Resolution Image Understanding. *arXiv:2412.16364*.
+
+[12] Zhang, Y., Zhang, R., Gu, J., Zhou, Y., Lipka, N., Yang, D., & Sun, T. (2023). LLaVAR: Enhanced Visual Instruction Tuning for Text-Rich Image Understanding. *arXiv:2306.17107*.
