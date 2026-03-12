@@ -61,7 +61,7 @@ The vision-language projector is a two-layer MLP that maps vision encoder output
 Linear(1152 → 4096) → GELU → Linear(4096 → 4096)
 ```
 
-All weights are initialized using Xavier uniform initialization with gain 1.0. The projector contains approximately 8M trainable parameters and serves as the primary bridge between visual and linguistic representations.
+The projector contains approximately 8M trainable parameters and serves as the primary bridge between visual and linguistic representations.
 
 ### Language Model
 
