@@ -41,7 +41,7 @@ In this work, we present **Compass**, a Japanese financial VLM that addresses th
 Our main contributions are:
 
 - A **three-phase training pipeline** that progressively builds vision-language alignment, structured mathematical reasoning, and financial domain expertise.
-- **Knowledge distillation** from Qwen3-30B-A3B-Thinking [2] using XML-structured output format, enabling structured step-by-step reasoning over approximately 750K mathematical problems.
+- **Knowledge distillation** from Qwen3-30B-A3B-Thinking-2507 [2] using XML-structured output format, enabling structured step-by-step reasoning over approximately 750K mathematical problems.
 - **Construction of document understanding datasets** from Japanese government PDF documents (Cabinet Office, FSA, MOF) for both Phase 1 (OCR and visual QA data) and Phase 3 (financial domain QA with multi-difficulty questions and consistency verification). These datasets are publicly available on HuggingFace and represent a major contribution of this work.
 - **Direct visual document reading** of Japanese government financial PDFs rendered at 150 DPI, covering four difficulty levels of financial question answering.
 
@@ -51,7 +51,7 @@ Compass follows the three-component VLM architecture established by LLaVA-OneVis
 
 ### Vision Encoder
 
-We employ [**SigLIP-v2 SO400M-patch14-384**](https://huggingface.co/google/siglip2-so400m-patch14-384) [6] as the vision encoder. This model produces feature representations with a hidden dimension of 1,152 and generates 729 patches per image (27 x 27 spatial grid from 384 x 384 input resolution at patch size 14). We extract features from the second-to-last layer (layer -2), following the convention established in LLaVA-OneVision.
+We employ [**SigLIP-v2 SO400M-patch14-384**](https://huggingface.co/google/siglip2-so400m-patch14-384) [6, 15] as the vision encoder. This model produces feature representations with a hidden dimension of 1,152 and generates 729 patches per image (27 x 27 spatial grid from 384 x 384 input resolution at patch size 14). We extract features from the second-to-last layer (layer -2), following the convention established in LLaVA-OneVision.
 
 ### MLP Projector
 
@@ -73,8 +73,6 @@ Unlike LLaVA-OneVision, Compass does **not** adopt the AnyRes multi-resolution p
 
 | Aspect | LLaVA-OneVision | Compass |
 |--------|----------------|---------|
-| Language Model | Vicuna / LLaMA | llm-jp-4-8b |
-| Chat Template | `USER:` / `ASSISTANT:` | `### 指示:` / `### 応答:` / `<\|eos\|>` |
 | Multi-Resolution | AnyRes-9 (6,561 tokens/image) | Single crop (729 tokens/image) |
 | Stage 1-1 Epochs | 1 | 2 (compensating for smaller dataset: 330K vs 558K) |
 | Stage 1-2 LLM Training | Full fine-tuning | LoRA (r=64, alpha=128) |
@@ -141,7 +139,7 @@ Phase 2 strengthens the model's mathematical reasoning capability, which is crit
 
 We distill structured reasoning capability from a stronger teacher model into Compass using supervised fine-tuning (SFT).
 
-**Teacher model:** Qwen3-30B-A3B-Thinking, a Mixture-of-Experts (MoE) model with strong mathematical reasoning capability.
+**Teacher model:** Qwen3-30B-A3B-Thinking-2507, a Mixture-of-Experts (MoE) model with strong mathematical reasoning capability.
 
 **Dataset** ([Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft)): Approximately 750K mathematical problems drawn from 11 diverse math datasets, with teacher-generated solutions in a structured XML format. **This dataset was constructed as part of this research.**
 
@@ -191,7 +189,6 @@ The final stage integrates visual document understanding with domain expertise b
 - Financial Services Agency (金融庁)
 - Ministry of Finance (財務省)
 
-PDF pages are scraped asynchronously with rate limiting, then filtered for financial relevance by rating each page on a 1-5 scale (only pages rated >= 3 are retained).
 
 **Question generation:** Qwen3-VL-32B/8B generates 3-5 questions per page across four difficulty levels:
 
@@ -288,9 +285,9 @@ We evaluate Compass on three benchmark suites spanning mathematical reasoning an
 
 Evaluation metrics include accuracy across all tasks and macro F1 for the chabsa sentiment analysis task. This benchmark measures the model's retention and acquisition of financial domain knowledge across training phases.
 
-### EDINET Bench (Financial Document Classification)
+### EDINET Bench (Complex Financial Tasks)
 
-**EDINET Bench** [13] evaluates performance on financial document classification tasks derived from EDINET (Electronic Disclosure for Investors' NETwork) filings:
+**EDINET Bench** [13] evaluates performance on complex financial tasks derived from EDINET (Electronic Disclosure for Investors' NETwork) filings:
 
 | Task | Type | Description | Approx. Size |
 |------|------|-------------|-------------|
@@ -470,9 +467,9 @@ The financial documents used for dataset construction are publicly available mat
 
 [3] Yoshikawa, Y., Shigeto, Y., & Takeuchi, A. (2017). STAIR Captions: Constructing a Large-Scale Japanese Image Caption Dataset. *ACL 2017*.
 
-[4] Chen, Z., Li, S., Smiley, C., Ma, Z., Shah, S., & Gordon, W. (2022). ConvFinQA: Exploring the Chain of Numerical Reasoning in Conversational Finance Question Answering. *EMNLP 2022*.
+[4] Chen, Z., Li, S., Smiley, C., Ma, Z., Shah, S., & Wang, W. Y. (2022). ConvFinQA: Exploring the Chain of Numerical Reasoning in Conversational Finance Question Answering. *EMNLP 2022*.
 
-[5] Chen, Z., Chen, W., Smiley, C., Shah, S., Borber, I., & Gordon, W. (2021). FinQA: A Dataset of Numerical Reasoning over Financial Data. *EMNLP 2021*.
+[5] Chen, Z., Chen, W., Smiley, C., Shah, S., Borova, I., & Wang, W. Y. (2021). FinQA: A Dataset of Numerical Reasoning over Financial Data. *EMNLP 2021*.
 
 [6] Zhai, X., Mustafa, B., Kolesnikov, A., & Beyer, L. (2023). Sigmoid Loss for Language Image Pre-Training. *ICCV 2023*.
 
@@ -491,3 +488,5 @@ The financial documents used for dataset construction are publicly available mat
 [13] Sugiura, I., Ishida, T., Makino, T., Tazuke, C., Nakagawa, T., Nakago, K., & Ha, D. (2026). EDINET-Bench: Evaluating LLMs on Complex Financial Tasks using Japanese Financial Statements. *ICLR 2026*. arXiv:2506.08762.
 
 [14] Preferred Networks. japanese-lm-fin-harness. https://github.com/pfnet-research/japanese-lm-fin-harness
+
+[15] Tschannen, M., Gritsenko, A., Narang, A., Zhai, X., & Beyer, L. (2025). SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features. *arXiv:2502.14786*.

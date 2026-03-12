@@ -41,9 +41,9 @@ ShowToc: true
 本研究の主な貢献は以下の通りである：
 
 - 視覚-言語アライメント、構造化された数学的推論、金融ドメイン専門知識を段階的に構築する**三段階学習パイプライン**。
-- Qwen3-30B-A3B-Thinking [2] からのXML構造化出力フォーマットを用いた**知識蒸留**により、約75万件の数学問題に対する段階的推論能力を獲得。
+- Qwen3-30B-A3B-Thinking-2507 [2] からのXML構造の出力フォーマットを用いた**知識蒸留**により、約75万件の数学問題に対する段階的推論能力を獲得。
 - 日本政府PDF文書（内閣府、金融庁、財務省）からのPhase 1（OCRおよび視覚QAデータ）とPhase 3（多難易度の質問生成と整合性検証を含む金融ドメインQA）の両方における**文書理解データセットの構築**。これらのデータセットはHuggingFaceで公開されており、本研究の主要な貢献の一つである。
-- 150 DPIでレンダリングされた日本政府金融PDF文書に対する4段階の難易度の金融質問応答を用いた**直接的な視覚文書読解**。
+- 日本政府金融PDF文書に対する4段階の難易度の金融質問応答を用いた**直接的な視覚文書読解**。
 
 ## アーキテクチャ
 
@@ -51,7 +51,7 @@ CompassはLLaVA-OneVision [1] で確立された三要素VLMアーキテクチ�
 
 ### 視覚エンコーダ
 
-視覚エンコーダとして [**SigLIP-v2 SO400M-patch14-384**](https://huggingface.co/google/siglip2-so400m-patch14-384) [6] を採用する。本モデルは隠れ次元1,152の特徴表現を生成し、1画像あたり729パッチ（384 x 384の入力解像度、パッチサイズ14から27 x 27の空間グリッド）を出力する。LLaVA-OneVisionの慣例に従い、最終層から2番目（layer -2）の特徴を抽出する。
+視覚エンコーダとして [**SigLIP-v2 SO400M-patch14-384**](https://huggingface.co/google/siglip2-so400m-patch14-384) [6, 15] を採用する。本モデルは隠れ次元1,152の特徴表現を生成し、1画像あたり729パッチ（384 x 384の入力解像度、パッチサイズ14から27 x 27の空間グリッド）を出力する。
 
 ### MLPプロジェクタ
 
@@ -73,8 +73,6 @@ LLaVA-OneVisionとは異なり、CompassはAnyResマルチ解像度処理戦略�
 
 | 項目 | LLaVA-OneVision | Compass |
 |------|----------------|---------|
-| 言語モデル | Vicuna / LLaMA | llm-jp-4-8b |
-| チャットテンプレート | `USER:` / `ASSISTANT:` | `### 指示:` / `### 応答:` / `<\|eos\|>` |
 | マルチ解像度 | AnyRes-9（6,561トークン/画像）| 単一クロップ（729トークン/画像）|
 | Stage 1-1 エポック数 | 1 | 2（小規模データセットの補償: 330K vs 558K）|
 | Stage 1-2 LLM学習 | フルファインチューニング | LoRA（r=64, alpha=128）|
@@ -141,7 +139,7 @@ Phase 2では、金融数値分析に不可欠な数学的推論能力を強化�
 
 より強力な教師モデルからCompassへ、教師あり学習（SFT）により構造化された推論能力を蒸留する。
 
-**教師モデル：** Qwen3-30B-A3B-Thinking。強力な数学的推論能力を持つMixture-of-Experts（MoE）モデル。
+**教師モデル：** Qwen3-30B-A3B-Thinking-2507。強力な数学的推論能力を持つMixture-of-Experts（MoE）モデル。
 
 **データセット** ([Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft))：11種類の数学データセットから収集された約75万件の数学問題。教師モデルが構造化XMLフォーマットで解答を生成。**本研究で構築したデータセット。**
 
@@ -191,7 +189,6 @@ Phase 3では、テキストベースの金融QAと直接的な視覚文書読�
 - 金融庁
 - 財務省
 
-PDFページはレート制限付きで非同期にスクレイピングされ、各ページの金融関連性を1-5で評価し（3以上のみ採用）、フィルタリングされる。
 
 **質問生成：** Qwen3-VL-32B/8Bが各ページについて4段階の難易度で3-5問を生成する：
 
@@ -288,9 +285,9 @@ Compassは全ての会話的インタラクションにllm-jp-4の指示フォ�
 
 評価指標は全タスクの正解率と、chabsaセンチメント分析タスクのマクロF1を含む。このベンチマークは、学習フェーズ全体を通じたモデルの金融ドメイン知識の保持と獲得を測定する。
 
-### EDINET Bench（金融文書分類）
+### EDINET Bench（複雑な金融タスク）
 
-**EDINET Bench** [13] はEDINET（金融商品取引法に基づく有価証券報告書等の開示書類に関する電子開示システム）の提出書類から導出された金融文書分類タスクのパフォーマンスを評価する：
+**EDINET Bench** [13] はEDINET（金融商品取引法に基づく有価証券報告書等の開示書類に関する電子開示システム）の提出書類から導出された複雑な金融タスクのパフォーマンスを評価する：
 
 | タスク | タイプ | 説明 | 概算サイズ |
 |--------|--------|------|-----------|
@@ -470,9 +467,9 @@ EDINET Benchの不正会計検出タスクでは、Phase 3終了後にROC-AUC 0.
 
 [3] Yoshikawa, Y., Shigeto, Y., & Takeuchi, A. (2017). STAIR Captions: Constructing a Large-Scale Japanese Image Caption Dataset. *ACL 2017*.
 
-[4] Chen, Z., Li, S., Smiley, C., Ma, Z., Shah, S., & Gordon, W. (2022). ConvFinQA: Exploring the Chain of Numerical Reasoning in Conversational Finance Question Answering. *EMNLP 2022*.
+[4] Chen, Z., Li, S., Smiley, C., Ma, Z., Shah, S., & Wang, W. Y. (2022). ConvFinQA: Exploring the Chain of Numerical Reasoning in Conversational Finance Question Answering. *EMNLP 2022*.
 
-[5] Chen, Z., Chen, W., Smiley, C., Shah, S., Borber, I., & Gordon, W. (2021). FinQA: A Dataset of Numerical Reasoning over Financial Data. *EMNLP 2021*.
+[5] Chen, Z., Chen, W., Smiley, C., Shah, S., Borova, I., & Wang, W. Y. (2021). FinQA: A Dataset of Numerical Reasoning over Financial Data. *EMNLP 2021*.
 
 [6] Zhai, X., Mustafa, B., Kolesnikov, A., & Beyer, L. (2023). Sigmoid Loss for Language Image Pre-Training. *ICCV 2023*.
 
@@ -491,3 +488,5 @@ EDINET Benchの不正会計検出タスクでは、Phase 3終了後にROC-AUC 0.
 [13] Sugiura, I., Ishida, T., Makino, T., Tazuke, C., Nakagawa, T., Nakago, K., & Ha, D. (2026). EDINET-Bench: Evaluating LLMs on Complex Financial Tasks using Japanese Financial Statements. *ICLR 2026*. arXiv:2506.08762.
 
 [14] Preferred Networks. japanese-lm-fin-harness. https://github.com/pfnet-research/japanese-lm-fin-harness
+
+[15] Tschannen, M., Gritsenko, A., Narang, A., Zhai, X., & Beyer, L. (2025). SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features. *arXiv:2502.14786*.

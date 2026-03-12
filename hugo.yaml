@@ -28,13 +28,12 @@ languages:
     weight: 1
     title: "Atsushi Yanagisawa"
     params:
-      description: "Atsushi Yanagisawa - Undergraduate student at Kyoto University, Undergraduate School of Informatics and Mathematical Science, Applied Mathematics and Physics. Research interests: Optimization, LLM, Machine Learning."
+      description: "Atsushi Yanagisawa - Undergraduate student at Kyoto University, Undergraduate School of Informatics and Mathematical Science, Applied Mathematics and Physics. Research interests: LLM, Machine Learning."
       keywords:
         - Atsushi Yanagisawa
         - Yanagisawa
         - Kyoto University
         - Machine Learning
-        - Optimization
         - LLM
       profileMode:
         enabled: true
@@ -43,7 +42,7 @@ languages:
           Undergraduate Student, Kyoto University
           Faculty of Engineering, Undergraduate School of Informatics and Mathematical Science, Applied Mathematics and Physics
 
-          **Interests:** Optimization / Large Language Models / Machine Learning
+          **Interests:** Large Language Models / Machine Learning
         buttons:
           - name: Publications
             url: publications/
@@ -86,7 +85,7 @@ languages:
     weight: 2
     title: "栁澤篤"
     params:
-      description: "栁澤篤（やなぎさわあつし） - 京都大学 工学部 情報学科 数理工学コース。研究分野：最適化・大規模言語モデル・機械学習。"
+      description: "栁澤篤（やなぎさわあつし） - 京都大学 工学部 情報学科 数理工学コース。研究分野：大規模言語モデル・機械学習。"
       keywords:
         - 栁澤篤
         - やなぎさわあつし
@@ -94,14 +93,13 @@ languages:
         - Atsushi Yanagisawa
         - 京都大学
         - 機械学習
-        - 最適化
       profileMode:
         enabled: true
         title: "栁澤篤"
         subtitle: |
           京都大学 工学部 情報学科 数理工学コース
 
-          **研究分野:** 最適化 / 大規模言語モデル / 機械学習
+          **研究分野:** 大規模言語モデル / 機械学習
         buttons:
           - name: 論文
             url: publications/
