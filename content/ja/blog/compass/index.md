@@ -22,9 +22,9 @@ ShowToc: true
 >
 > **HuggingFace Collection:** [https://huggingface.co/collections/Yana/compass](https://huggingface.co/collections/Yana/compass)
 >
-> **Poster:** [ft-lllm-2025-poster.pdf](/slides/ft-lllm-2025-poster.pdf) (Japanese)
+> **Poster:** [ft-lllm-2025-poster.pdf](/mysite/slides/ft-lllm-2025-poster.pdf) (Japanese)
 >
-> **Slide:** [ft-llm-2026-slide.pdf](/slides/ft-llm-2026-slide.pdf) (Japanese)
+> **Slide:** [ft-llm-2026-slide.pdf](/mysite/slides/ft-llm-2026-slide.pdf) (Japanese)
 
 本プロジェクトは FT-LLM 2026 の自由形タスクとして実施されたものである。
 
