@@ -12,6 +12,11 @@ layout: "home"
 <div class="news-list">
 
 <div class="news-item">
+<div class="news-date">2026.04</div>
+<div class="news-text"><span class="news-badge">ブログ</span> 日本語金融特化Vision-Language Modelに関する<a href="/mysite/blog/compass/">Compassブログ記事</a>を公開 &mdash; <a href="https://llm-jp.github.io/tuning-competition/2026/workshop.html">LLM-jp Tuning Competition 2026 ワークショップ</a>を参照</div>
+</div>
+
+<div class="news-item">
 <div class="news-date">2026.03</div>
 <div class="news-text"><span class="news-badge">論文</span> "System Identification via Frequency-Domain GP Regression" をISCS 2026にて発表 &mdash; <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
 </div>

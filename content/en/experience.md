@@ -11,7 +11,7 @@ TocOpen: true
 <div class="timeline">
 
 <div class="timeline-item">
-<div class="timeline-date">2025.07 - Present</div>
+<div class="timeline-date">2025.07 - 2026.01</div>
 <div class="timeline-content">
 <h3>Research Member, <a href="https://www.algoverse.co/">Algoverse AI Research</a></h3>
 <p>Conducting research at Algoverse AI Research.</p>
