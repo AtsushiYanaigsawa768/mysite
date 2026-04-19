@@ -31,13 +31,6 @@ TocOpen: true
 <div class="pub-links"><a href="https://www.jstage.jst.go.jp/article/ijabc/2025/3/2025_126/_article/-char/en/">Paper</a></div>
 </div>
 
-<div class="pub-entry" id="aamas2025-easycbs">
-<div class="pub-title"><a href="#aamas2025-easycbs">Introduce Easy-CBS</a></div>
-<div class="pub-authors"><strong>A. Yanagisawa</strong></div>
-<div class="pub-meta"><span class="pub-venue">DRP Challenge @ AAMAS 2025</span> <span class="pub-tag">International Conference Competition</span> <span class="pub-tag">Multi-Agent</span> <span class="pub-tag">Path Planning</span> <span class="pub-award">1st Prize @ AAMAS 2025</span></div>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Easy-CBS">Code</a> | <a href="/mysite/slides/AAMAS_DRP.pdf">Slides</a></div>
-</div>
-
 <div class="pub-entry" id="abc2025-virtualdata">
 <div class="pub-title"><a href="#abc2025-virtualdata">Virtual Data Generation for Complex Industrial Activity Recognition</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong></div>
@@ -50,6 +43,19 @@ TocOpen: true
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, C. Premachandra, H. Kawanaka, A. Inoue, T. Hata, E. Ueda</div>
 <div class="pub-meta"><span class="pub-venue">ICIEV/IVPR 2021</span> <span class="pub-tag">International Conference, Peer-reviewed</span> <span class="pub-tag">Machine Learning</span> <span class="pub-tag">Medical AI</span></div>
 <div class="pub-links"><a href="https://arxiv.org/abs/2109.07106">Paper</a></div>
+</div>
+
+</div>
+
+## Conference Presentations
+
+<div class="pub-list">
+
+<div class="pub-entry" id="aamas2025-easycbs">
+<div class="pub-title"><a href="#aamas2025-easycbs">2nd Drone Routing Problem Competition : An Approach Based on Constrained Conflict-Based Search Algorithm</a></div>
+<div class="pub-authors"><strong>A. Yanagisawa</strong></div>
+<div class="pub-meta"><span class="pub-venue">DRP Challenge @ AAMAS 2025</span> <span class="pub-tag">International Conference Competition</span> <span class="pub-tag">Multi-Agent</span> <span class="pub-tag">Path Planning</span> <span class="pub-award">1st Prize @ AAMAS 2025</span></div>
+<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Easy-CBS">Code</a> | <a href="/mysite/slides/AAMAS_DRP.pdf">Slides</a></div>
 </div>
 
 </div>
