@@ -10,6 +10,13 @@ TocOpen: true
 
 <div class="pub-list">
 
+<div class="pub-entry" id="cats-icml2026-compass">
+<div class="pub-title"><a href="#cats-icml2026-compass">Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents</a></div>
+<div class="pub-authors"><strong>A. Yanagisawa</strong>, G. Kakimoto</div>
+<div class="pub-meta"><span class="pub-venue">CATS Workshop @ ICML 2026</span> <span class="pub-tag">International Workshop, Peer-reviewed</span> <span class="pub-tag">VLM</span> <span class="pub-tag">Continual Adaptation</span> <span class="pub-tag">Finance</span></div>
+<div class="pub-links"><a href="/mysite/blog/compass/">Blog</a> | <a href="https://github.com/AtsushiYanaigsawa768/Compass">Code</a> | <a href="https://huggingface.co/collections/Yana/compass">HuggingFace</a> | <a href="https://cats-icml.github.io/">Workshop</a></div>
+</div>
+
 <div class="pub-entry" id="iscs2026-gp">
 <div class="pub-title"><a href="#iscs2026-gp">System Identification via Frequency-Domain Gaussian Process Regression for Transfer-Function Estimation</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, K. Ohki</div>

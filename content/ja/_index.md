@@ -12,8 +12,13 @@ layout: "home"
 <div class="news-list">
 
 <div class="news-item">
+<div class="news-date">2026.05</div>
+<div class="news-text"><span class="news-badge">論文</span> "Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents" (Compass) が <a href="https://cats-icml.github.io/">CATS Workshop @ ICML 2026</a> に採択 &mdash; <a href="/mysite/ja/blog/compass/">最新ブログ記事</a></div>
+</div>
+
+<div class="news-item">
 <div class="news-date">2026.04</div>
-<div class="news-text"><span class="news-badge">ブログ</span> 日本語金融特化Vision-Language Modelに関する<a href="/mysite/blog/compass/">Compassブログ記事</a>を公開 &mdash; <a href="https://llm-jp.github.io/tuning-competition/2026/workshop.html">LLM-jp Tuning Competition 2026 ワークショップ</a>を参照</div>
+<div class="news-text"><span class="news-badge">ブログ</span> 日本語金融特化Vision-Language Modelに関する<a href="/mysite/ja/blog/compass-ft-llm-2026/">Compassブログ記事（FT-LLM 2026 版）</a>を公開 &mdash; <a href="https://llm-jp.github.io/tuning-competition/2026/workshop.html">LLM-jp Tuning Competition 2026 ワークショップ</a>を参照</div>
 </div>
 
 <div class="news-item">

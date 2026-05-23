@@ -1,35 +1,33 @@
 ---
-title: "Compass: Developing a Japanese Financial Vision-Language Model through Integrated Reasoning Enhancement and Document Comprehension"
-date: 2026-03-09
-summary: "We present Compass, a Japanese Vision-Language Model specialized for financial document understanding. Built on the LLaVA-OneVision architecture with llm-jp-4-8b, our three-phase training pipeline integrates vision-language alignment, mathematical reasoning enhancement via knowledge distillation, and financial domain specialization through direct visual document reading."
-tags: ["VLM", "Finance", "NLP", "Japanese", "LLaVA", "SFT", "LoRA"]
+title: "Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents"
+date: 2026-05-13
+summary: "Accepted at the CATS Workshop @ ICML 2026. We track an 8.4B-parameter multimodal model from an un-fine-tuned baseline (Phase 0) through three training phases on Japanese financial disclosures, and find that each benchmark peaks at a different phase — so the best checkpoint is task-dependent. This is the latest version of the Compass project; an earlier write-up targeting the FT-LLM 2026 competition is preserved as a legacy post."
+tags: ["VLM", "Finance", "NLP", "Japanese", "LLaVA", "SFT", "LoRA", "Continual Adaptation", "ICML 2026", "CATS Workshop"]
 layout: "blog-single"
 tocSections:
   - "Introduction"
   - "Architecture"
-  - "Training Pipeline"
-  - "Datasets"
-  - "Implementation Details"
-  - "Evaluation Setup"
+  - "Data Generation from Government PDFs"
+  - "Three-Phase Staged Continual Adaptation"
   - "Experimental Results"
-  - "Conclusion and Future Work"
+  - "Comparison with External Models"
+  - "Discussion"
+  - "Limitations"
+  - "Conclusion"
   - "Acknowledgments"
   - "References"
 ShowToc: true
 ---
 
+> **Status:** Accepted at the **Continual Adaptation at Scale: Towards Sustainable AI (CATS) Workshop @ ICML 2026** ([workshop site](https://cats-icml.github.io/)).
+>
 > **GitHub Repository:** [https://github.com/AtsushiYanaigsawa768/Compass](https://github.com/AtsushiYanaigsawa768/Compass)
 >
 > **HuggingFace Collection:** [https://huggingface.co/collections/Yana/compass](https://huggingface.co/collections/Yana/compass)
 >
-> **Poster:** [ft-lllm-2025-poster.pdf](/mysite/slides/ft-lllm-2025-poster.pdf) (Japanese)
->
-> **Slide:** [ft-llm-2026-slide.pdf](/mysite/slides/ft-llm-2026-slide.pdf) (Japanese)
+> **Previous (legacy) version of this post — FT-LLM 2026 free-form task write-up:** [Compass (FT-LLM 2026 version)](/mysite/blog/compass-ft-llm-2026/)
 
-This project was conducted as part of the free-form task of FT-LLM 2026.
-
-**Title:** Development of a Japanese Financial VLM through Integration of Reasoning Enhancement and Document Comprehension
-(推論強化と文書読解の統合による日本語金融VLMの開発)
+This post supersedes the earlier FT-LLM 2026 write-up. The earlier post described the same model under the framing of the FT-LLM 2026 free-form task; the present post re-frames the same pipeline as a study of **staged continual adaptation** for the CATS workshop at ICML 2026, adds an un-fine-tuned **Phase 0 (P0) baseline**, reports comparisons against external models (Llama-3.3-70B, GPT-5, DeepSeek-R1, Qwen-2/3, Claude 3.5 Sonnet), and updates the per-task analysis. The previous numbers and discussion remain available at the link above for reference.
 
 This research was carried out by [Atsushi Yanagisawa](https://atsushiyanaigsawa768.github.io/mysite/en/) and [Genshin Kakimoto](https://github.com/kakimoto0225).
 
@@ -37,428 +35,246 @@ This research was carried out by [Atsushi Yanagisawa](https://atsushiyanaigsawa7
 
 ## Introduction
 
-The Japanese financial industry produces a vast volume of structured and semi-structured documents, including annual securities reports (有価証券報告書), earnings summaries (決算短信), and regulatory filings from agencies such as the Financial Services Agency (FSA) and the Ministry of Finance (MOF). These documents present unique challenges for automated understanding: complex table layouts interleaving numerical data with prose, mixed Japanese-English notation, and the need for multi-step numerical reasoning over domain-specific financial concepts such as ROE, WACC, and year-over-year growth rates.
+Adapting a multimodal foundation model to a specialised domain rarely proceeds in a single step: contemporary recipes chain together vision–language alignment, reasoning distillation, and domain tuning, and each stage can both install new capabilities and erode previously acquired ones. LLaVA-style recipes [1, 12] establish the architectural template for such multi-stage adaptation but say little about how earlier phases interact with later ones when the target domain demands structured prediction beyond free-form QA. We ask:
 
-While recent Vision-Language Models (VLMs) have demonstrated strong performance on general-purpose visual question answering and document understanding tasks [1], their application to Japanese financial documents remains limited. General-purpose VLMs lack the domain-specific reasoning capability required to interpret financial tables and perform accurate numerical computations, and most existing models are optimized for English-language content.
+> **Do the phases of a staged adaptation pipeline contribute monotonically, or does staging induce capability trade-offs whose best checkpoint differs by task?**
 
-In this work, we present **Compass**, a Japanese financial VLM that addresses these challenges through a three-phase training pipeline integrating: (1) foundation-level vision-language alignment, (2) mathematical reasoning enhancement via knowledge distillation, and (3) financial domain specialization through direct visual document reading. Our model is built on the LLaVA-OneVision architecture [1] with several key adaptations for the Japanese financial domain, including the use of llm-jp-4-8b as the language backbone and a custom chat template designed for instruction following in Japanese.
+We study this through a three-phase **staged continual adaptation** pipeline — vision–language alignment, mathematical reasoning distillation, financial-domain adaptation — on an 8.4B-parameter model pairing SigLIP-v2 [15] with llm-jp-4-8B-Instruct via a two-layer MLP projector [1, 12]. The un-fine-tuned instruction baseline serves as **Phase 0 (P0)** so each phase's contribution is measured against a common reference.
 
-Our main contributions are:
+- **Phase 1 (P1)** aligns visual and language representations using existing Japanese captioning/VQA corpora together with OCR and visual QA we synthesise from PDFs published by Japanese government agencies — the Cabinet Office, the Financial Services Agency (FSA), and the Ministry of Finance (MOF).
+- **Phase 2 (P2)** distils chain-of-thought from Qwen3-30B-A3B-Thinking-2507 [2]; we include this phase because solving real-world financial tasks requires a non-trivial level of numerical reasoning.
+- **Phase 3 (P3)** consumes text-only financial benchmarks [4, 5, 8] together with visual QA we construct from financial documents to instil financial knowledge directly from those documents.
 
-- A **three-phase training pipeline** that progressively builds vision-language alignment, structured mathematical reasoning, and financial domain expertise.
-- **Knowledge distillation** from Qwen3-30B-A3B-Thinking-2507 [2] using XML-structured output format, enabling structured step-by-step reasoning over approximately 750K mathematical problems.
-- **Construction of document understanding datasets** from Japanese government PDF documents (Cabinet Office, FSA, MOF) for both Phase 1 (OCR and visual QA data) and Phase 3 (financial domain QA with multi-difficulty questions and consistency verification). These datasets are publicly available on HuggingFace and represent a major contribution of this work.
-- **Direct visual document reading** of Japanese government financial PDFs rendered at 150 DPI, covering four difficulty levels of financial question answering.
+As Japanese-language testbeds we adopt **EDINET disclosures** [13] and **JP Fin Harness** [14] — EDINET measures performance on real-world financial tasks, while JP Fin Harness probes finance knowledge in Japanese — and additionally use **GSM8K** [9] to measure mathematical ability. **Different benchmarks peak at different phases.**
+
+**Contributions:**
+
+1. An empirical characterisation of phase-dependent capability trade-offs on EDINET and JP Fin Harness, anchored to the un-fine-tuned baseline so each phase's contribution is decomposable.
+2. A three-phase *staged continual adaptation* pipeline operating end-to-end on page images.
+3. A reproducible synthetic-data pipeline generating OCR, visual QA, and domain-specific financial QA from government PDFs, to be released publicly.
+4. An XML-structured chain-of-thought distillation recipe from Qwen3-30B-A3B-Thinking-2507 [2].
+
+---
 
 ## Architecture
 
-Compass follows the three-component VLM architecture established by LLaVA-OneVision [1], consisting of a vision encoder, an MLP projector, and a large language model. We adopt specific components tailored for Japanese financial document understanding.
+The model consists of three components: a vision encoder, an MLP projector, and a language model.
 
-### Vision Encoder
+![Architecture of the proposed model. The input image is connected to the language model through SigLIP-v2 and the MLP projector, and is processed jointly with the input text.](multimodal_pipeline.png)
 
-We employ [**SigLIP-v2 SO400M-patch14-384**](https://huggingface.co/google/siglip2-so400m-patch14-384) [6, 15] as the vision encoder. This model produces feature representations with a hidden dimension of 1,152 and generates 729 patches per image (27 x 27 spatial grid from 384 x 384 input resolution at patch size 14). We extract features from the second-to-last layer (layer -2), following the convention established in LLaVA-OneVision.
+- **Vision encoder.** [SigLIP-v2 SO400M-patch14-384](https://huggingface.co/google/siglip2-so400m-patch14-384) [15], producing 729 patches per image (27 × 27 grid at 384 × 384 input).
+- **Projector.** A two-layer MLP `Linear(1152 → 4096) → GELU → Linear(4096 → 4096)` (~8M parameters) bridging visual and linguistic representations.
+- **Language model.** **llm-jp-4-8B-Instruct**, an 8B Japanese-pretrained model with hidden dimension 4,096. Together with the vision encoder the total parameter count is approximately **8.4B**.
 
-### MLP Projector
-
-The vision-language projector is a two-layer MLP that maps vision encoder outputs to the language model's embedding space:
-
-```
-Linear(1152 → 4096) → GELU → Linear(4096 → 4096)
-```
-
-The projector contains approximately 8M trainable parameters and serves as the primary bridge between visual and linguistic representations.
-
-### Language Model
-
-We use **llm-jp-4-8b** as the language backbone, an 8-billion-parameter Japanese language model with a hidden dimension of 4,096. This is a key departure from the original LLaVA-OneVision, which uses Vicuna or LLaMA-based models. The choice of llm-jp-4-8b is motivated by its strong pre-training on Japanese text corpora, which provides a more suitable foundation for Japanese financial document understanding.
-
-### Key Differences from LLaVA-OneVision
-
-Unlike LLaVA-OneVision, Compass does **not** adopt the AnyRes multi-resolution processing strategy. While LLaVA-OneVision uses AnyRes-9 (1 global crop + up to 8 local crops, producing 6,561 vision tokens per image), Compass processes each input image as a single 384 x 384 crop, producing **729 vision tokens per image**. This design choice reduces computational cost while maintaining sufficient resolution for document understanding tasks.
-
-| Aspect | LLaVA-OneVision | Compass |
-|--------|----------------|---------|
-| Multi-Resolution | AnyRes-9 (6,561 tokens/image) | Single crop (729 tokens/image) |
-| Stage 1-1 Epochs | 1 | 2 (compensating for smaller dataset: 330K vs 558K) |
-| Stage 1-2 LLM Training | Full fine-tuning | LoRA (r=64, alpha=128) |
-| Effective Batch (Stage 1-1) | 256 | 128 |
+Unlike LLaVA-OneVision we do **not** adopt AnyRes multi-resolution processing; each image is processed as a single 384 × 384 crop (729 vision tokens), trading some resolution for compute. See the [legacy post](/mysite/blog/compass-ft-llm-2026/) for the detailed comparison table.
 
 ---
 
-## Training Pipeline
+## Data Generation from Government PDFs
 
-Our training pipeline consists of three phases, each designed to build upon the capabilities established in previous phases. The following table summarizes the module training states across all phases:
+The synthetic supervision at the core of this study comes from two sources: publicly available PDFs issued by Japanese government agencies — the Cabinet Office, FSA, and MOF — and publicly available math corpora. We chose these three agencies because they publish a large volume of finance-related materials.
 
-| Phase | Stage | Vision Encoder | MLP Projector | LLM | Objective |
-|-------|-------|:---:|:---:|:---:|-----------|
-| Phase 1 | Stage 1-1 | Frozen | **Train** | Frozen | Vision-language alignment |
-| Phase 1 | Stage 1-2 | **Train** | **Train** | LoRA (r=64) | Visual instruction following |
-| Phase 2 | SFT | — | — | QLoRA (r=32) | Structured reasoning |
-| Phase 3 | Stage 3-1 | — | — | LoRA (r=16) | Financial text QA |
-| Phase 3 | Stage 3-2 | Frozen | **Train** | LoRA (r=16) | Financial document reading |
+From the government PDFs we construct three single-page datasets using **Qwen3-VL-32B-Instruct** as the teacher:
 
-**Frozen** = parameters fixed; **Train** = parameters updated; **—** = module not used.
+1. **OCR dataset** — text transcription of each page (motivated by LLaVAR [12]).
+2. **Extractive + reasoning VQA dataset** — first turn extracts a specific element from the page; second turn asks for the evidence grounding that answer (motivated by LLaVAR-2 [11]).
+3. **Finance-specific QA dataset** — questions tied to each page, ranging from simple extraction to multi-step numerical computation. For this dataset we manually identify finance-relevant sub-sites within the Cabinet Office, FSA, and MOF web presences and restrict source PDFs to those sub-sites.
 
----
+### Math Reasoning Distillation Corpus
 
-### Phase 1: Foundation VLM Development
-
-Phase 1 establishes the fundamental vision-language alignment and visual instruction-following capability. For detailed dataset creation procedures, see the [Phase 1 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase1) in the repository.
-
-#### Stage 1-1: Caption and OCR Pre-training
-
-The objective of this stage is to establish basic vision-language correspondence by training the MLP projector to align visual features with the language model's embedding space.
-
-**Training configuration:** Only the MLP projector is updated; both the vision encoder and language model remain frozen.
-
-**Datasets:**
-- **STAIR Captions** ([shunk031/STAIR-Captions](https://huggingface.co/datasets/shunk031/STAIR-Captions)) [3]: Approximately 330K Japanese image-caption pairs (filtered to license_id=4). Each image has 5 associated captions, and we randomly sample one caption per image during each training epoch to increase data diversity.
-- **OCR Dataset** ([Yana/ft-llm-2026-ocr-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-ocr-dataset)): Generated from Japanese government PDF documents using Qwen3-VL-32B with 4 types of OCR prompts, inspired by LLaVAR [12]. This dataset teaches the model to read text from document images. **This dataset was constructed as part of this research.**
-
-**Training prompt:** Each sample uses the instruction `"この画像を端的に説明してください。"` (Describe this image briefly.) for caption data, with the corresponding caption as the target response.
-
-**Hyperparameters:** Learning rate 1e-3 with AdamW optimizer, cosine learning rate scheduler with 3% warmup, effective batch size 128 (per-device batch 2, gradient accumulation 64), 2 epochs, maximum sequence length 2,048, bf16 mixed precision. The loss function is cross-entropy loss (next-token prediction), computed only over response tokens.
-
-#### Stage 1-2: Visual Instruction Tuning
-
-This stage enables the model to understand and follow visual instructions by training all three components.
-
-**Training configuration:** The vision encoder, MLP projector, and language model (via LoRA) are all updated. The vision encoder uses a reduced learning rate of 2e-6 to preserve pre-trained visual features, while the projector and LLM LoRA use 2e-5.
-
-**Datasets:**
-- **QA Dataset** ([Yana/ft-llm-2026-qa-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-qa-dataset)): Question-answer pairs generated by Qwen3-VL using a two-stage process: first extractive QA (De), then reasoning QA (Dr), from government PDF pages. The format was inspired by LLaVAR-2 [11]. **This dataset was constructed as part of this research.**
-- **ja-vg-vqa-conversation** ([llm-jp/ja-vg-vqa-conversation](https://huggingface.co/datasets/llm-jp/ja-vg-vqa-conversation)): Approximately 90K multi-turn visual question answering conversations based on Visual Genome images.
-- **SakanaAI JA-VG-VQA-500** ([SakanaAI/JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500)): Approximately 1,500 high-quality Japanese VQA samples.
-
-**LoRA configuration:** Rank r=64, alpha=128, applied to the language model. Gradient checkpointing is enabled to manage memory consumption.
-
-**Hyperparameters:** Effective batch size 256, 1 epoch, maximum sequence length 2,048, bf16 mixed precision.
-
----
-
-### Phase 2: Reasoning Enhancement
-
-Phase 2 strengthens the model's mathematical reasoning capability, which is critical for financial numerical analysis. This phase operates on the language model only (text-only training, no vision components). For detailed dataset creation procedures, see the [Phase 2 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase2) in the repository.
-
-#### 2.1 SFT: Knowledge Distillation for Structured Reasoning
-
-We distill structured reasoning capability from a stronger teacher model into Compass using supervised fine-tuning (SFT).
-
-**Teacher model:** Qwen3-30B-A3B-Thinking-2507, a Mixture-of-Experts (MoE) model with strong mathematical reasoning capability.
-
-**Dataset** ([Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft)): Approximately 750K mathematical problems drawn from 11 diverse math datasets, with teacher-generated solutions in a structured XML format. **This dataset was constructed as part of this research.**
-
-**Output format:** We train the model to produce responses in a structured XML format that separates problem understanding, reasoning, and final answer:
+For the math reasoning dataset we draw problems from six publicly available math corpora — MGSM-ja, MathInstruct, OpenMathReasoning, OpenR1-Math-220k, orca-math-word-problems-200k, and NuminaMath-1.5 — and randomly sample **150K problems in total**. Each sampled problem is re-annotated by prompting Qwen3-30B-A3B-Thinking-2507 [2] to emit its response inside `<Problem>`, `<Thinking>`, and `<Answer>` tags. This XML format localises intermediate-reasoning errors and fits the multi-step numerical reasoning common in financial documents.
 
 ```xml
 <Problem>Restatement of the problem in the model's own words</Problem>
-<Thinking>Step-by-step reasoning process with intermediate calculations</Thinking>
+<Thinking>Step-by-step reasoning with intermediate calculations</Thinking>
 <Answer>\boxed{final numerical answer}</Answer>
 ```
 
-This structured format explicitly decomposes the reasoning process, making it easier to verify correctness and identify where errors occur in multi-step reasoning.
+### Dataset Sizes
 
-**Training configuration:** QLoRA [7] with 4-bit NF4 quantization to reduce memory requirements. LoRA rank r=32, alpha=64. TRL SFTTrainer with sequence packing is used for efficient training.
-
-**Hyperparameters:** Learning rate 2e-4, global batch size 64 (micro batch 2, gradient accumulation auto-calculated as 64 / (2 x num_gpus)), 1 epoch, maximum sequence length 2,048, bf16 mixed precision.
-
----
-
-### Phase 3: Domain Specialization
-
-Phase 3 adapts the model to the financial domain through two complementary approaches: text-based financial QA and direct visual document reading. For detailed dataset creation procedures, see the [Phase 3 README](https://github.com/AtsushiYanaigsawa768/Compass/tree/main/phase3) in the repository.
-
-#### 3.1 Text-Based Financial QA
-
-This stage grounds the model in financial domain knowledge using established financial QA benchmarks.
-
-**Datasets:**
-- **ConvFinQA** [4]: Approximately 3,600 multi-turn conversational financial QA instances requiring sequential numerical reasoning over financial tables.
-- **FinQA** [5]: Approximately 8,000 single-turn questions requiring numerical reasoning over financial reports, with gold programs (DSL expressions) for answer derivation.
-- **TAT-QA** [8]: Approximately 16,500 questions over hybrid tabular-textual financial content, covering four answer types: span extraction, multi-span extraction, arithmetic computation, and counting.
-
-**Data processing:** Tabular data from financial reports is converted to a linearized text format using `[Header]...[Row N]` markers. The model is trained to generate both the question interpretation and the answer from the provided financial context.
-
-**Training configuration:** Language model only (no vision components). LoRA rank r=16, alpha=32.
-
-**Hyperparameters:** Learning rate 2e-5, effective batch size 16 (per-device batch 2, gradient accumulation 8), 3 epochs, maximum sequence length 2,048, bf16 mixed precision.
-
-#### 3.2 VLM-Based Document Reading
-
-The final stage integrates visual document understanding with domain expertise by training the model to directly read and reason about financial document images.
-
-**Core hypothesis:** Processing actual document images yields deeper contextual understanding than text-only learning, as the model can leverage visual cues such as table formatting, graph layouts, and document structure that are lost in text extraction.
-
-**Data source** ([Yana/ft-llm-2026-domain-specific-qa](https://huggingface.co/datasets/Yana/ft-llm-2026-domain-specific-qa)): Financial documents from three Japanese government agencies. **This dataset was constructed as part of this research and represents a major contribution of this work:**
-- Cabinet Office (内閣府)
-- Financial Services Agency (金融庁)
-- Ministry of Finance (財務省)
-
-
-**Question generation:** Qwen3-VL-32B/8B generates 3-5 questions per page across four difficulty levels:
-
-| Type | Difficulty | Description | Example |
-|------|-----------|-------------|---------|
-| A | Easy | Numerical extraction | Read specific figures from tables |
-| B | Medium | Rate of change / comparison | Calculate year-over-year growth rates |
-| C | Medium-Hard | Financial formula application | Calculate ROE, WACC, PER from document data |
-| D | Hard | Multi-step reasoning | Complex calculations requiring ~8 reasoning steps |
-
-**Visual processing:** PDF pages are rendered to images at **150 DPI** using PyMuPDF and input directly to the VLM, bypassing text extraction. This approach aligns with the evaluation setting, as benchmarks such as JDocQA and EDINET_Bench use image-format document input.
-
-**Training configuration:** Vision encoder frozen; MLP projector and LLM (via LoRA r=16, alpha=32) are updated.
-
-**Hyperparameters:** Learning rate 2e-5, effective batch size 16 (per-device batch 2, gradient accumulation 8), 3 epochs, maximum sequence length 2,048, bf16 mixed precision.
+| Phase | Type | Content | Examples | Type total |
+|-------|------|---------|---------:|-----------:|
+| P1-S1 | OCR / Caption | STAIR Captions [3] | 820,310 | **1,084,952** |
+| P1-S1 | OCR / Caption | OCR from government PDFs (synthesised) | 264,642 | |
+| P1-S2 | VQA | Extractive + reasoning QA from government PDFs | 264,642 | **365,137** |
+| P1-S2 | VQA | JA-VG-VQA conversational | 99,995 | |
+| P1-S2 | VQA | JA-VG-VQA-500 | 500 | |
+| P2-S1 | Reasoning SFT | Random sample across MGSM-ja, MathInstruct, OpenMathReasoning, OpenR1-Math-220k, Orca-Math-200k, NuminaMath-1.5 | ~150,000 | **~150,000** |
+| P3-S1 | Financial QA | FinQA [5] + ConvFinQA [4] + TAT-QA [8] | 23,358 | **23,358** |
+| P3-S2 | Visual Financial QA | Domain-specific QA from government PDFs | 32,484 | **32,484** |
 
 ---
 
-## Datasets
+## Three-Phase Staged Continual Adaptation
 
-The following table summarizes all datasets used across the three training phases:
+Training proceeds in three phases, with the un-fine-tuned instruction-tuned llm-jp-4-8B-Instruct serving as P0.
 
-| Phase | Stage | Data Type | Approximate Size | Source |
-|-------|-------|-----------|-----------------|--------|
-| 1 | 1-1 | Image Captions | ~330K | [STAIR Captions](https://huggingface.co/datasets/shunk031/STAIR-Captions) [3] (license_id=4, 5 captions/image) |
-| 1 | 1-1 | OCR | Generated | [Yana/ft-llm-2026-ocr-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-ocr-dataset) ★ |
-| 1 | 1-2 | VQA (extractive + reasoning) | Generated | [Yana/ft-llm-2026-qa-dataset](https://huggingface.co/datasets/Yana/ft-llm-2026-qa-dataset) ★ |
-| 1 | 1-2 | VQA (multi-turn) | ~90K | [ja-vg-vqa-conversation](https://huggingface.co/datasets/llm-jp/ja-vg-vqa-conversation) |
-| 1 | 1-2 | VQA (high-quality) | ~1.5K | [SakanaAI JA-VG-VQA-500](https://huggingface.co/datasets/SakanaAI/JA-VG-VQA-500) |
-| 2 | SFT | Math (structured reasoning) | ~750K | [Yana/ft-llm-2026-reasoning-sft](https://huggingface.co/datasets/Yana/ft-llm-2026-reasoning-sft) ★ |
-| 3 | 3-1 | Financial QA (conversational) | ~3.6K | ConvFinQA [4] |
-| 3 | 3-1 | Financial QA (numerical) | ~8K | FinQA [5] |
-| 3 | 3-1 | Financial QA (hybrid) | ~16.5K | TAT-QA [8] |
-| 3 | 3-2 | Domain QA (visual) | ~32K | [Yana/ft-llm-2026-domain-specific-qa](https://huggingface.co/datasets/Yana/ft-llm-2026-domain-specific-qa) ★ |
+| Phase | Modules Updated | Primary Objective |
+|-------|-----------------|-------------------|
+| **P1-S1** | Projector only | Alignment of image and language embeddings (vision and LLM frozen) |
+| **P1-S2** | Vision + Projector + LLM (LoRA r=64) | Visual instruction following in Japanese |
+| **P2-S1** | LLM (QLoRA r=32, 4-bit NF4) | Chain-of-thought distillation for math reasoning |
+| **P3-S1** | LLM (LoRA r=16) | Text-only financial-domain adaptation |
+| **P3-S2** | Projector + LLM (LoRA r=16) | Visual domain QA on government financial documents |
 
-★ = Dataset constructed as part of this research.
+**Why this ordering?**
 
----
+- **P1 is required** because the pretrained LLM has no prior exposure to image tokens from SigLIP-v2's embedding space.
+- **P2 is motivated** by the observation that financial documents require multi-step numerical deduction (e.g., consistency checks across tables).
+- **P3 re-introduces** domain-specific supervision, as general-purpose math distillation does not cover financial terminology or reporting conventions.
 
-## Implementation Details
+### Training Hyperparameters
 
-### Chat Template
+| Stage | LR | Batch | LoRA (r, α) | Epochs |
+|-------|----|-------|-------------|--------|
+| P1-S1 | 1e-3 | 2 | None (projector only) | 2 |
+| P1-S2 | 2e-5 | 2 | 64, 128 | 1 |
+| P1-S2B (LLM) | 1e-5 | 2 | 64, 128 | 1 |
+| P1-S2B (Vision) | 2e-6 | 2 | 64, 128 | 1 |
+| P2-S1 (SFT, QLoRA) | 2e-4 | 2 | 32, 64 | 1 |
+| P3-S1 / P3-S2 | 5e-6 | 2 | 16, 32 | 3 |
 
-Compass uses the llm-jp-4 instruction format for all conversational interactions. The template structure is:
+All stages use AdamW with cosine schedule and warmup. Gradient checkpointing is enabled on memory-intensive stages.
 
-```
-以下は、タスクを説明する指示です。要求を適切に満たす応答を書きなさい。
+### Training Loss Curves
 
-### 指示:
-{user_message}
-
-### 応答:
-{assistant_message}<|eos|>
-```
-
-The system message `"以下は、タスクを説明する指示です。要求を適切に満たす応答を書きなさい。"` is prepended to all conversations. The special token `<|eos|>` (token id=2) marks the end of each assistant turn. During training, all tokens except assistant response tokens are masked with `IGNORE_INDEX = -100` to ensure the loss is computed only over model-generated content.
-
-For vision inputs, the `<image>` token serves as a placeholder that is replaced by the vision encoder's output embeddings during forward pass.
-
-### Hyperparameter Summary
-
-| Phase | Stage | Effective Batch | Epochs | Learning Rate | Max Seq Len | LoRA Config | Precision |
-|-------|-------|----------------|--------|---------------|-------------|-------------|-----------|
-| 1 | 1-1 | 128 | 2 | 1e-3 | 2,048 | None (projector only) | bf16 |
-| 1 | 1-2 | 256 | 1 | 2e-5 (VE: 2e-6) | 2,048 | r=64, alpha=128 | bf16 |
-| 2 | SFT | 64 | 1 | 2e-4 | 2,048 | r=32, alpha=64 (QLoRA 4-bit) | bf16 |
-| 3 | Text QA | 16 | 3 | 2e-5 | 2,048 | r=16, alpha=32 | bf16 |
-| 3 | Domain QA | 16 | 3 | 2e-5 | 2,048 | r=16, alpha=32 | bf16 |
-
-All phases use AdamW optimizer with cosine learning rate scheduling and warmup. Gradient checkpointing is enabled for memory-intensive stages.
-
-
----
-
-## Evaluation Setup
-
-We evaluate Compass on three benchmark suites spanning mathematical reasoning and financial domain understanding. Results will be reported in a forthcoming update.
-
-### GSM8K (Mathematical Reasoning)
-
-**GSM8K** [9] consists of 1,319 grade school math word problems in English, designed to test multi-step arithmetic reasoning. We use exact match accuracy as the evaluation metric, with support for 0-8 shot chain-of-thought prompting. This benchmark measures the effectiveness of Phase 2 reasoning enhancement.
-
-### JP Fin Harness (Japanese Financial Knowledge)
-
-**JP Fin Harness** is a Japanese financial domain multiple-choice benchmark comprising five tasks:
-
-| Task | Description | Approx. Size |
-|------|-------------|-------------|
-| chabsa | Financial sentiment analysis | ~800 |
-| cma_basics | Securities analyst exam questions | ~500 |
-| cpa_audit | CPA audit exam questions | ~600 |
-| fp2 | Financial planner level 2 exam | ~400 |
-| security_sales_1 | Securities sales representative exam | ~300 |
-
-Evaluation metrics include accuracy across all tasks and macro F1 for the chabsa sentiment analysis task. This benchmark measures the model's retention and acquisition of financial domain knowledge across training phases.
-
-### EDINET Bench (Complex Financial Tasks)
-
-**EDINET Bench** [13] evaluates performance on complex financial tasks derived from EDINET (Electronic Disclosure for Investors' NETwork) filings:
-
-| Task | Type | Description | Approx. Size |
-|------|------|-------------|-------------|
-| fraud_detection | Binary classification | Detecting fraudulent financial reports | ~1,000 |
-| earnings_forecast | Binary classification | Predicting earnings direction | ~1,500 |
-| industry_prediction | Multi-class (16 classes) | Classifying company industry sector | ~800 |
-
-The input consists of four sections extracted from annual securities reports: Summary (business overview), BS (balance sheet), CF (cash flow statement), and PL (profit and loss statement). This benchmark tests the model's ability to understand and classify real financial documents, directly measuring the effectiveness of Phase 3 domain specialization.
+![Loss curves during three-stage training. Phase 1 achieves vision–language alignment, Phase 2 develops reasoning, and Phase 3 performs financial adaptation in sequence.](training_loss_6panels.png)
 
 ---
 
 ## Experimental Results
 
-### Training Loss
+### Per-Phase Evaluation (Anchored to P0)
 
-Figure 2 shows the training loss curves across all phases of the Compass training pipeline.
+The key empirical claim of this paper is that **each benchmark peaks at a different phase** when measured against the un-fine-tuned baseline.
 
-![Figure 2: Training loss curves across all phases of the Compass pipeline.](training_loss_6panels.png)
+| Benchmark | **P0** | **P1** | **P2** | **P3** |
+|-----------|:------:|:------:|:------:|:------:|
+| GSM8K | 58.5 | 64.6 | **73.2** | 71.9 |
+| EDINET earnings† | 0.524 | **0.532** | 0.500 | 0.458 |
+| EDINET fraud† | 0.516 | 0.472 | 0.534 | **0.580** |
+| EDINET industry | 4.7 | **8.5** | 6.9 | 6.5 |
+| JP Fin Harness | 45.0 | **54.2** | 31.6 | 49.6 |
 
-### Quantitative Results
+† ROC-AUC. Others are Accuracy (%). **Bold** = best phase per row.
 
-All tasks are evaluated in a **zero-shot** setting. The following table shows performance at the end of each training phase, along with reference baselines.
+- **P0 → P1** raises JP Fin Harness (45.0 → 54.2), GSM8K (58.5 → 64.6), and EDINET industry (4.7 → 8.5); EDINET earnings is essentially unchanged; **EDINET fraud is the only benchmark that drops** (0.516 → 0.472).
+- From **P1**, GSM8K continues to rise to **73.2 at P2** before slipping to 71.9 at P3; **EDINET fraud recovers at P2 (0.534) and peaks at P3 (0.580)**.
+- The remaining three benchmarks all **decline past P1**: JP Fin Harness (54.2 → 31.6 → 49.6), EDINET earnings (0.532 → 0.500 → 0.458), EDINET industry (8.5 → 6.9 → 6.5).
+- Relative to P0, **P3 lies above P0 on four of five benchmarks** and below P0 only on EDINET earnings (0.458 vs. 0.524).
 
-| Benchmark | Phase 1 | Phase 2 | Phase 3 Stage 1 | **Phase 3 Stage 2** | Llama-3.3-70B [13] | Qwen-14B-Chat [14] |
-|-----------|:-------:|:-------:|:---------------:|:-------------------:|:-------------------:|:------------------:|
-| GSM-8K | 64.6 | **73.2** | — | 71.9 | — | 59.3 |
-| *EDINET Bench* | | | | | | |
-| &ensp;earnings† | 0.532 | 0.500 | — | 0.458 | 0.41 | — |
-| &ensp;fraud† | 0.472 | 0.534 | — | **0.580** | 0.59 | — |
-| &ensp;industry | **8.5** | 6.9 | — | 6.5 | 14.0 | — |
-| JP Fin Harness | **54.2** | 31.6 | 48.5 | 49.6 | — | 49.1 |
+### Per-Task JP Fin Harness Breakdown
 
-†ROC-AUC. All others are Accuracy (%). **Bold** indicates the best result among Compass phases. — indicates not evaluated. Phase 3 Stage 1 refers to the model after Stage 3-1 (text-based financial QA) only; Phase 3 Stage 2 is the final result after Stage 3-2 (VLM-based document reading).
+| JP Fin task | P0 | P1 | P2 | P3-1 | P3-2 |
+|-------------|:--:|:--:|:--:|:----:|:----:|
+| chabsa | 0.8591 | **0.9428** | 0.5818 | 0.9357 | 0.9356 |
+| cma_basics | 0.3421 | **0.5526** | 0.2105 | 0.3947 | 0.3947 |
+| cpa_audit | **0.2764** | 0.2261 | 0.1683 | 0.2487 | 0.2362 |
+| fp2 | 0.2989 | **0.3389** | 0.1789 | 0.2863 | 0.2989 |
+| security_sales_1 | 0.4737 | **0.6491** | 0.4386 | 0.5614 | 0.6140 |
+| **Average** | 0.4500 | **0.5419** | 0.3156 | 0.4854 | 0.4959 |
 
-#### JP Fin Harness Per-Task Results
+Subtask behaviour is heterogeneous: the P0 → P1 gain is concentrated on **chabsa**, **cma_basics**, and **security_sales_1**. From P1, every subtask drops at P2 and only **partially** recovers at P3. **cpa_audit** is the only task whose best score is at **P0** (0.276) — neither P1 nor P3 recovers it.
 
-| Task | Phase 1 | Phase 2 | Phase 3 Stage 1 | **Phase 3 Stage 2** |
-|------|:-------:|:-------:|:---------------:|:-------------------:|
-| chabsa | **0.9428** | 0.5818 | 0.9357 | 0.9356 |
-| cma_basics | **0.5526** | 0.2105 | 0.3947 | 0.3947 |
-| cpa_audit | 0.2261 | 0.1683 | **0.2487** | 0.2362 |
-| fp2 | **0.3389** | 0.1789 | 0.2863 | 0.2989 |
-| security_sales_1 | **0.6491** | 0.4386 | 0.5614 | 0.6140 |
+---
 
-All tasks report Accuracy. **Bold** indicates the best result per task.
+## Comparison with External Models
 
-Phase 2 reasoning enhancement improved GSM-8K from 64.6 to **73.2**, but significantly degraded financial task performance (JP Fin Harness: 54.2 → 31.6). Phase 3 domain specialization recovered financial performance to 49.6, demonstrating the effectiveness of the three-phase approach. Notably, the Phase 1 model already exhibited strong financial knowledge (JP Fin Harness: 54.2), likely due to financial content present in the government PDF documents used during training.
+### EDINET
 
-### Qualitative Results: Phase 1 (Visual Instruction Following)
+Llama-3.3-70B is evaluated under the same setup as ours; GPT-5 and DeepSeek-R1 numbers are taken from EDINET-Bench [13] for context only (cross-source, indicative rather than head-to-head).
 
-After Phase 1 training, Compass demonstrates the ability to understand and respond to visual questions in Japanese.
+| Benchmark | Llama-3.3-70B | GPT-5 | DeepSeek-R1 | **Ours (P3)** |
+|-----------|:-------------:|:-----:|:-----------:|:-------------:|
+| EDINET earnings† | 0.410 | **0.580** | 0.430 | 0.458 |
+| EDINET fraud† | **0.590** | 0.560 | 0.540 | 0.580 |
+| EDINET industry | 14.0 | **21.0** | 11.0 | 6.5 |
 
-**Example 1 (Correct — Visual Scene Understanding):**
+- On **EDINET fraud**, our 0.580 is within 0.01 of Llama-3.3-70B (0.590), despite using only **8.4B parameters vs. 70B**.
+- On **EDINET earnings**, both our P1 peak (0.532) and our P3 checkpoint (0.458) exceed Llama-3.3-70B (0.410) and DeepSeek-R1 (0.430), while trailing GPT-5 (0.580).
+- **EDINET industry** is a clear weakness: our 6.5 trails every external baseline (11.0 – 21.0).
 
-![Phase 1 success example: the model correctly identifies a zoo from the image.](phase1_sucess1.jpg)
+### JP Fin Harness
 
-> **Instruction:** ここはどこですか（Where is this place?）
->
-> **Model Response:** 動物園（Zoo）
->
-> **Ground Truth:** 動物園（Zoo）
+External scores are from the official 0-shot leaderboard [14].
 
-**Example 2 (Correct — Counting):**
+| Model | Size | Avg. |
+|-------|:----:|:----:|
+| Claude 3.5 Sonnet | proprietary | **77.0** |
+| Qwen2-72B-Instruct | 72B | 67.7 |
+| Qwen-14B-Chat | 14B | 49.1 |
+| Meta-Llama-3-8B-Instruct | 8B | 44.7 |
+| **Ours (P0)** | 8B | 45.0 |
+| **Ours (P1)** | 8B | **54.2** |
+| **Ours (P3)** | 8B | 49.6 |
 
-> **Instruction:** 画像に写っている人の数はいくつですか？（How many people are in the image?）
->
-> **Model Response:** 2人（2 people）
->
-> **Ground Truth:** ２人（2 people）
+Our **P1** (54.2) exceeds Meta-Llama-3-8B-Instruct (44.7) and Qwen-14B-Chat (49.1) but trails Qwen2-72B-Instruct (67.7) and Claude 3.5 Sonnet (77.0); our **P3** (49.6) is roughly at Qwen-14B-Chat parity.
 
-**Example 3 (Incorrect — Document Detail Extraction):**
+### GSM8K
 
-> **Instruction:** この資料のページ番号は何ですか？（What is the page number of this document?）
->
-> **Model Response:** 23
->
-> **Ground Truth:** 22
+Some math corpora used at P2 include GSM8K-style problems, so the comparison includes a degree of in-distribution fine-tuning.
 
-This error illustrates a common challenge: extracting precise numerical details from document images requires fine-grained visual attention that is further refined in later training phases.
+| Model | GSM8K |
+|-------|:-----:|
+| Qwen-14B Chat | 59.3 |
+| Qwen3 8B-base | **89.84** |
+| Llama 3 8B | 84.5 |
+| Gemma 3 4B | 89.2 |
+| Ours (P0) | 58.5 |
+| Ours (P1) | 64.6 |
+| **Ours (P2)** | **73.2** |
+| Ours (P3) | 71.9 |
 
-### Qualitative Results: Phase 2 (Mathematical Reasoning)
+Our P2 (73.2) exceeds Qwen-14B Chat (59.3) but remains 11–17 points below Llama 3 8B (84.5), Gemma 3 4B (89.2), and Qwen3 8B-base (89.84).
 
-After Phase 2 training with knowledge distillation, Compass generates structured XML-formatted reasoning. Below are representative GSM8K examples.
+---
 
-**Example 1 (Correct):**
+## Discussion
 
-> **Question:** A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?
+### Capability trajectories, not endpoints
 
-```xml
-<Problem>
-A robe takes 2 bolts of blue fiber and half that much white fiber.
-How many bolts in total does it take?
-</Problem>
+No benchmark in our suite follows a flat trajectory: the **best phase varies by benchmark**. JP Fin Harness, EDINET earnings, and EDINET industry peak at **P1** (54.2 / 0.532 / 8.5); GSM8K peaks at **P2** (73.2); EDINET fraud peaks at **P3** (0.580). EDINET fraud is also the only benchmark that drops at P0 → P1 (0.516 → 0.472) before recovering.
 
-<Thinking>
-First, the problem states that a robe takes 2 bolts of blue fiber.
-Then, "half that much white fiber" refers to the blue fiber,
-so half of 2 bolts is 1 bolt of white fiber.
-Total: 2 bolts (blue) + 1 bolt (white) = 3 bolts total.
-</Thinking>
+Deployment checkpoint selection is therefore task-dependent: **P1** for Japanese financial-domain priors, **P2** for math, **P3** for fraud detection. We treat staged continual adaptation as a *trajectory* anchored to P0 rather than a single endpoint.
 
-<Answer>
-\boxed{3}
-</Answer>
-```
+### Why P1 → P2 erodes financial scores
 
-**Predicted:** 3 &ensp;|&ensp; **Reference:** 3 &ensp;|&ensp; **Correct**
+JP Fin Harness drops sharply at P1 → P2 (54.2 → 31.6), and EDINET earnings (0.532 → 0.500) and industry (8.5 → 6.9) decline as well; every JP Fin Harness subtask collapses, including evidence-grounded `chabsa` (0.943 → 0.582).
 
-**Example 2 (Incorrect):**
+P2 trains exclusively on math problems with chain-of-thought supervision, and we interpret these declines as **catastrophic forgetting**: heavy math-only supervision shifts the output distribution toward numerical chain-of-thought and overwrites the Japanese financial-domain priors acquired at P1. **EDINET fraud is the exception** (0.472 → 0.534) — plausibly because the task relies heavily on numerical consistency-checking across accounting tables, for which math distillation provides directly relevant supervision, so the math gain appears to outweigh the lost domain priors.
 
-> **Question:** Josh decides to try flipping a house. He buys a house for $80,000 and then puts in $50,000 in repairs. This increased the value of the house by 150%. How much profit did he make?
+### Why P3 partially restores but does not match P1
 
-```xml
-<Problem>
-Josh buys a house for $80,000 and puts in $50,000 in repairs.
-This increased the value of the house by 150%.
-How much profit did he make?
-</Problem>
+P3 re-introduces financial supervision and lifts the finance benchmarks back: JP Fin Harness 31.6 → 49.6, `chabsa` 0.582 → 0.936, and EDINET fraud 0.534 → 0.580 (its peak). However, JP Fin Harness, EDINET earnings, and EDINET industry all remain **below their P1 peaks** (49.6 vs. 54.2; 0.458 vs. 0.532; 6.5 vs. 8.5), and `chabsa` does not fully recover (0.943 vs. 0.936).
 
-<Thinking>
-Total cost: $80,000 + $50,000 = $130,000.
-The repairs increased the value by 150% of the original value:
-$80,000 × 1.5 = $120,000.
-Profit: $120,000 - $130,000 = -$10,000...
-</Thinking>
+We attribute the remaining gap primarily to the **much smaller P3 supervision**: P3-S1 (23,358) plus P3-S2 (32,484) totals only ~56K examples — an order of magnitude below the P1 corpus (1.08M for P1-S1; 365K for P1-S2) and roughly a third of the P2 corpus (~150K problems). **Scaling up P3 supervision is therefore the most direct lever** to close the remaining gap.
 
-<Answer>
-\boxed{0}
-</Answer>
-```
+### What document-grounded VQA contributes
 
-**Predicted:** 0 &ensp;|&ensp; **Reference:** 70,000 &ensp;|&ensp; **Incorrect**
+P1 is not a financial-task fine-tuning, but its training corpus is dominated by finance-related government PDFs, and the resulting **P0 → P1 jump on JP Fin Harness (45.0 → 54.2)** indicates that document-grounded VQA over these PDFs already populates non-trivial financial-domain priors. A complementary signal comes from P3: re-introducing visual domain QA from government PDFs at **P3-S2**, on top of the text-only financial fine-tuning at P3-S1, lifts the JP Fin Harness average from **0.4854 to 0.4959**.
 
-The model misinterprets "increased the value by 150%" — the correct interpretation is that the new value is $80,000 + $80,000 × 1.5 = $200,000, yielding a profit of $200,000 − $130,000 = $70,000.
+Document-grounded VQA therefore has a measurable but modest effect on top of text-only adaptation; broader gains likely require a more deliberate VQA pipeline — e.g., a wider mix of question types beyond the extractive/reasoning split, more explicit table- and chart-grounded supervision, and harder distractors that force layout-aware comparison.
 
-**Example 3 (Correct):**
+---
 
-> **Question:** Every day, Wendi feeds each of her chickens three cups of mixed chicken feed. She gives the chickens their feed in three separate meals. In the morning, she gives her flock of chickens 15 cups of feed. In the afternoon, she gives her chickens another 25 cups of feed. How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens?
+## Limitations
 
-```xml
-<Problem>
-Wendi feeds each of her 20 chickens 3 cups per day in 3 meals.
-Morning: 15 cups. Afternoon: 25 cups.
-How many cups for the final meal?
-</Problem>
+1. All scores are **single-seed runs**; small inter-phase differences should be read as trends rather than significance-tested comparisons.
+2. Training is restricted to **single-page inputs**; multi-page training is a natural follow-up. Real-world financial analysis frequently requires cross-referencing multiple pages within a securities report or comparing figures across different documents.
+3. A **skip- or shorten-P2 ablation** would test whether the fraud gain at P2 justifies the cost on industry / earnings.
+4. P2 uses **QLoRA** while other stages use full-precision LoRA, so a small contribution from quantization and the P2 → P3 adapter handoff cannot be excluded.
 
-<Thinking>
-Total feed given so far: 15 + 25 = 40 cups.
-Total feed needed: 20 chickens × 3 cups = 60 cups.
-Final meal: 60 - 40 = 20 cups.
-</Thinking>
+---
 
-<Answer>
-\boxed{20}
-</Answer>
-```
+## Conclusion
 
-**Predicted:** 20 &ensp;|&ensp; **Reference:** 20 &ensp;|&ensp; **Correct**
+We presented an 8B-backbone multimodal foundation model for Japanese financial documents, trained via a synthetic-data pipeline over government-published PDFs and tracked from an un-fine-tuned baseline (P0) through three training phases.
 
-## Conclusion and Future Work
+- **P0 → P1** alone lifts JP Fin Harness from 45.0 to 54.2.
+- Across the staged trajectory the model reaches **0.580 ROC-AUC on EDINET fraud** (at P3) and **73.2 on GSM8K** (at P2).
+- **Each benchmark peaks at a different phase**: math distillation drives fraud gains but erodes EDINET industry, earnings, and taxonomy-heavy JP Fin Harness subtasks.
 
-Phase 2 reasoning enhancement yielded a clear improvement in mathematical reasoning (GSM-8K: 64.6 → 73.2), while Phase 3 domain specialization recovered financial task performance that had degraded during Phase 2 (JP Fin Harness: 31.6 → 49.6). The Phase 1 model's strong initial financial performance (54.2) suggests that government PDF documents used for OCR and QA data generation already contain substantial financial knowledge, which was partially overwritten during text-only reasoning training in Phase 2 and subsequently recovered through targeted financial fine-tuning in Phase 3.
-
-For the EDINET Bench fraud detection task, Compass achieved an ROC-AUC of 0.580 after Phase 3, approaching the Llama-3.3-70B baseline (0.59) despite having only 8B parameters. However, the industry prediction task remains challenging (8.5% at best vs. 14.0% for Llama-3.3-70B), indicating room for improvement in multi-class classification over financial documents.
-
-A key architectural limitation of the current model is that it processes only **one image per inference call**. Real-world financial analysis frequently requires cross-referencing multiple pages within a securities report or comparing figures across different documents. Extending Compass to support **multi-image input** is a critical direction for future work to enable practical deployment in financial document analysis workflows.
+Checkpoint selection is therefore **task-dependent**, and staged continual adaptation is best evaluated as a **trajectory** anchored to P0 rather than a single endpoint — a perspective directly relevant to the CATS workshop's focus on sustainable, continual adaptation of foundation models.
 
 ## Acknowledgments
 
@@ -492,6 +308,6 @@ The financial documents used for dataset construction are publicly available mat
 
 [13] Sugiura, I., Ishida, T., Makino, T., Tazuke, C., Nakagawa, T., Nakago, K., & Ha, D. (2026). EDINET-Bench: Evaluating LLMs on Complex Financial Tasks using Japanese Financial Statements. *ICLR 2026*. arXiv:2506.08762.
 
-[14] Preferred Networks. japanese-lm-fin-harness. https://github.com/pfnet-research/japanese-lm-fin-harness
+[14] Preferred Networks. japanese-lm-fin-harness. <https://github.com/pfnet-research/japanese-lm-fin-harness>
 
 [15] Tschannen, M., Gritsenko, A., Narang, A., Zhai, X., & Beyer, L. (2025). SigLIP 2: Multilingual Vision-Language Encoders with Improved Semantic Understanding, Localization, and Dense Features. *arXiv:2502.14786*.
