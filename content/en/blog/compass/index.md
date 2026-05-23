@@ -27,7 +27,7 @@ ShowToc: true
 >
 > **Previous (legacy) version of this post — FT-LLM 2026 free-form task write-up:** [Compass (FT-LLM 2026 version)](/mysite/blog/compass-ft-llm-2026/)
 
-This post supersedes the earlier FT-LLM 2026 write-up. The earlier post described the same model under the framing of the FT-LLM 2026 free-form task; the present post re-frames the same pipeline as a study of **staged continual adaptation** for the CATS workshop at ICML 2026, adds an un-fine-tuned **Phase 0 (P0) baseline**, reports comparisons against external models (Llama-3.3-70B, GPT-5, DeepSeek-R1, Qwen-2/3, Claude 3.5 Sonnet), and updates the per-task analysis. The previous numbers and discussion remain available at the link above for reference.
+This post is the blog version of our paper accepted at the **CATS Workshop @ ICML 2026**.
 
 This research was carried out by [Atsushi Yanagisawa](https://atsushiyanaigsawa768.github.io/mysite/en/) and [Genshin Kakimoto](https://github.com/kakimoto0225).
 

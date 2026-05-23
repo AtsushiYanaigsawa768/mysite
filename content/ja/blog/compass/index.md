@@ -27,7 +27,7 @@ ShowToc: true
 >
 > **旧版（FT-LLM 2026 自由形タスク向け記事）:** [Compass (FT-LLM 2026 版)](/mysite/ja/blog/compass-ft-llm-2026/)
 
-本記事は以前のFT-LLM 2026版を置き換える最新版である。旧版では同一モデルをFT-LLM 2026自由形タスクの枠組みで紹介していたが、本記事ではCATS Workshop @ ICML 2026 向けに、同じパイプラインを**段階的継続適応 (staged continual adaptation)** の研究として再構成し、未ファインチューン時の **Phase 0 (P0) ベースライン** を追加、外部モデル（Llama-3.3-70B、GPT-5、DeepSeek-R1、Qwen-2/3、Claude 3.5 Sonnet）との比較を新規に報告し、タスクごとの分析を更新した。旧版の数値・議論はリンク先で引き続き閲覧可能である。
+本記事は、**CATS Workshop @ ICML 2026** に採択された論文のブログ版である。
 
 本研究は [柳澤 篤](https://atsushiyanaigsawa768.github.io/mysite/en/) と [柿本 源心](https://github.com/kakimoto0225) により実施された。
 
