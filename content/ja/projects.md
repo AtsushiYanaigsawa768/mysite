@@ -14,7 +14,7 @@ TocOpen: true
 <h3><a href="#proj-gauss-process">Gauss-Process</a></h3>
 <p>周波数領域ガウス過程回帰による伝達関数推定のためのシステム同定。<strong>ISCS 2026 採択・発表。</strong></p>
 <span class="pub-tag">ガウス過程</span> <span class="pub-tag">システム同定</span>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
+<div class="pub-links"><a href="https://ieeexplore.ieee.org/document/11524317">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">GitHub</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
 </div>
 
 <div class="project-card" id="proj-liminal-training">

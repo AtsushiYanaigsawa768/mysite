@@ -23,7 +23,7 @@ layout: "home"
 
 <div class="news-item">
 <div class="news-date">2026.03</div>
-<div class="news-text"><span class="news-badge">論文</span> "System Identification via Frequency-Domain GP Regression" をISCS 2026にて発表 &mdash; <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
+<div class="news-text"><span class="news-badge">論文</span> "System Identification via Frequency-Domain GP Regression" をISCS 2026にて発表 &mdash; <a href="https://ieeexplore.ieee.org/document/11524317">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
 </div>
 
 <div class="news-item">

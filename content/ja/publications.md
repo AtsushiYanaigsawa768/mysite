@@ -21,7 +21,7 @@ TocOpen: true
 <div class="pub-title"><a href="#iscs2026-gp">System Identification via Frequency-Domain Gaussian Process Regression for Transfer-Function Estimation</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, K. Ohki</div>
 <div class="pub-meta"><span class="pub-venue">ISCS 2026</span> <span class="pub-tag">国際学会、査読あり</span> <span class="pub-tag">ガウス過程</span> <span class="pub-tag">システム同定</span></div>
-<div class="pub-links"><a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
+<div class="pub-links"><a href="https://ieeexplore.ieee.org/document/11524317">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
 </div>
 
 <div class="pub-entry" id="neurips2025-liminal">
