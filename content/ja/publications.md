@@ -13,50 +13,63 @@ TocOpen: true
 <div class="pub-entry" id="emnlp2026-subliminal">
 <div class="pub-title"><a href="#emnlp2026-subliminal">On Mitigation of Subliminal Learning in Large Language Models</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, B. Gho, R. R. B. M. Narender, K. Zhu, M. Panwar, A. Mari</div>
-<div class="pub-meta"><span class="pub-venue">Findings of EMNLP 2026</span> <span class="pub-tag">国際学会、査読あり</span> <span class="pub-tag">LLM</span> <span class="pub-tag">AI安全性</span></div>
+<div class="pub-meta"><span class="pub-venue">Findings of EMNLP 2026</span> <span class="pub-tag">国際学会</span> <span class="pub-tag">査読あり</span> <span class="pub-tag">LLM</span> <span class="pub-tag">AI安全性</span></div>
 <div class="pub-links"><a href="https://arxiv.org/abs/2609.22215">論文</a></div>
 </div>
 
 <div class="pub-entry" id="cats-icml2026-compass">
 <div class="pub-title"><a href="#cats-icml2026-compass">Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, G. Kakimoto</div>
-<div class="pub-meta"><span class="pub-venue">CATS Workshop @ ICML 2026</span> <span class="pub-tag">国際ワークショップ、査読あり</span> <span class="pub-tag">VLM</span> <span class="pub-tag">継続適応</span> <span class="pub-tag">金融</span></div>
+<div class="pub-meta"><span class="pub-venue">CATS Workshop @ ICML 2026</span> <span class="pub-tag">国際ワークショップ</span> <span class="pub-tag">査読あり</span> <span class="pub-tag">VLM</span> <span class="pub-tag">継続適応</span> <span class="pub-tag">金融</span></div>
 <div class="pub-links"><a href="https://arxiv.org/abs/2610.27904">論文</a> | <a href="/mysite/ja/blog/compass/">ブログ</a> | <a href="https://github.com/AtsushiYanaigsawa768/Compass">コード</a> | <a href="https://huggingface.co/collections/Yana/compass">HuggingFace</a> | <a href="https://cats-icml.github.io/">ワークショップ</a></div>
 </div>
 
 <div class="pub-entry" id="iscs2026-gp">
 <div class="pub-title"><a href="#iscs2026-gp">System Identification via Frequency-Domain Gaussian Process Regression for Transfer-Function Estimation</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, K. Ohki</div>
-<div class="pub-meta"><span class="pub-venue">ISCS 2026</span> <span class="pub-tag">国際学会、査読あり</span> <span class="pub-tag">ガウス過程</span> <span class="pub-tag">システム同定</span></div>
+<div class="pub-meta"><span class="pub-venue">ISCS 2026</span> <span class="pub-tag">国際学会</span> <span class="pub-tag">査読あり</span> <span class="pub-tag">ガウス過程</span> <span class="pub-tag">システム同定</span></div>
 <div class="pub-links"><a href="https://ieeexplore.ieee.org/document/11524317">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/Gauss-Process">コード</a> | <a href="/mysite/slides/iscs_slide.pdf">スライド</a></div>
 </div>
 
 <div class="pub-entry" id="neurips2025-liminal">
 <div class="pub-title"><a href="#neurips2025-liminal">Liminal Training: Characterizing and Mitigating Subliminal Learning in Large Language Models</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, A. Khan, T. K. Balraj Singh, Y. Na, K. Zhu, A. Mari</div>
-<div class="pub-meta"><span class="pub-venue">ResponsibleFM Workshop @ NeurIPS 2025</span> <span class="pub-tag">国際ワークショップ、査読あり</span> <span class="pub-tag">LLM</span> <span class="pub-tag">AI安全性</span></div>
+<div class="pub-meta"><span class="pub-venue">ResponsibleFM Workshop @ NeurIPS 2025</span> <span class="pub-tag">国際ワークショップ</span> <span class="pub-tag">査読あり</span> <span class="pub-tag">LLM</span> <span class="pub-tag">AI安全性</span></div>
 <div class="pub-links"><a href="https://openreview.net/forum?id=aslS4eRygE">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/liminal-training">コード</a></div>
 </div>
 
 <div class="pub-entry" id="iciev2025-parkinson">
 <div class="pub-title"><a href="#iciev2025-parkinson">Hybrid Transformer and Deep Gaussian Process for Parkinson's Tremor Classification</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong></div>
-<div class="pub-meta"><span class="pub-venue">IJABC, Vol. 2025, No. 3 / ICIEV2025 Competition</span> <span class="pub-tag">査読付き国際ジャーナル</span> <span class="pub-tag">深層学習</span> <span class="pub-tag">医療AI</span></div>
+<div class="pub-meta"><span class="pub-venue">IJABC, Vol. 2025, No. 3 / ICIEV2025 Competition</span> <span class="pub-tag">国際ジャーナル</span> <span class="pub-tag">査読あり</span> <span class="pub-tag">深層学習</span> <span class="pub-tag">医療AI</span></div>
 <div class="pub-links"><a href="https://www.jstage.jst.go.jp/article/ijabc/2025/3/2025_126/_article/-char/en/">論文</a></div>
 </div>
 
 <div class="pub-entry" id="abc2025-virtualdata">
 <div class="pub-title"><a href="#abc2025-virtualdata">Virtual Data Generation for Complex Industrial Activity Recognition</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong></div>
-<div class="pub-meta"><span class="pub-venue">IJABC, Vol. 2025, No. 2 / ABC2025 Competition</span> <span class="pub-tag">査読付き国際ジャーナル</span> <span class="pub-tag">データ拡張</span> <span class="pub-tag">行動認識</span> <span class="pub-award">ABC2025 優勝</span></div>
+<div class="pub-meta"><span class="pub-venue">IJABC, Vol. 2025, No. 2 / ABC2025 Competition</span> <span class="pub-tag">国際ジャーナル</span> <span class="pub-tag">査読あり</span> <span class="pub-tag">データ拡張</span> <span class="pub-tag">行動認識</span> <span class="pub-award">ABC2025 優勝</span></div>
 <div class="pub-links"><a href="https://www.jstage.jst.go.jp/article/ijabc/2025/2/2025_107/_article/-char/en/">論文</a> | <a href="https://github.com/AtsushiYanaigsawa768/Virtual_Data_Generation">コード</a> | <a href="/mysite/slides/ABC2025_Virtual_Data_Generation.pdf">スライド</a> | <a href="https://autocare.ai/abc2025">ABC2025</a></div>
 </div>
 
 <div class="pub-entry" id="iciev2021-medical">
 <div class="pub-title"><a href="#iciev2021-medical">WIP: Medical Incident Prediction Through Analysis of Electronic Medical Records Using Machine Learning: Fall Prediction</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, C. Premachandra, H. Kawanaka, A. Inoue, T. Hata, E. Ueda</div>
-<div class="pub-meta"><span class="pub-venue">ICIEV/IVPR 2021</span> <span class="pub-tag">国際学会、査読あり</span> <span class="pub-tag">機械学習</span> <span class="pub-tag">医療AI</span></div>
+<div class="pub-meta"><span class="pub-venue">ICIEV/IVPR 2021</span> <span class="pub-tag">国際学会</span> <span class="pub-tag">査読あり</span> <span class="pub-tag">機械学習</span> <span class="pub-tag">医療AI</span></div>
 <div class="pub-links"><a href="https://arxiv.org/abs/2109.07106">論文</a></div>
+</div>
+
+</div>
+
+## 国内学会
+
+<div class="pub-list">
+
+<div class="pub-entry" id="jsai2026-layoutlmv3">
+<div class="pub-title"><a href="#jsai2026-layoutlmv3">LayoutLMv3の日本語事前学習に関する検証</a></div>
+<div class="pub-authors"><strong>柳澤 篤</strong>, 中山 功太, 小田 悠介, 赤部 晃一, 岡崎 直観</div>
+<div class="pub-meta"><span class="pub-venue">2026年度 人工知能学会全国大会（JSAI2026）</span> <span class="pub-tag">国内学会</span> <span class="pub-tag">文書理解</span> <span class="pub-tag">事前学習</span></div>
+<div class="pub-links"><a href="https://www.jstage.jst.go.jp/article/pjsai/JSAI2026/0/JSAI2026_1YinA39/_article/-char/ja">論文</a> | <a href="https://huggingface.co/llm-jp/layoutlmv3-japanese-preview">モデル</a></div>
 </div>
 
 </div>
