@@ -10,11 +10,18 @@ TocOpen: true
 
 <div class="pub-list">
 
+<div class="pub-entry" id="emnlp2026-subliminal">
+<div class="pub-title"><a href="#emnlp2026-subliminal">On Mitigation of Subliminal Learning in Large Language Models</a></div>
+<div class="pub-authors"><strong>A. Yanagisawa</strong>, B. Gho, R. R. B. M. Narender, K. Zhu, M. Panwar, A. Mari</div>
+<div class="pub-meta"><span class="pub-venue">Findings of EMNLP 2026</span> <span class="pub-tag">International Conference, Peer-reviewed</span> <span class="pub-tag">LLM</span> <span class="pub-tag">AI Safety</span></div>
+<div class="pub-links"><a href="https://arxiv.org/abs/2609.22215">Paper</a></div>
+</div>
+
 <div class="pub-entry" id="cats-icml2026-compass">
 <div class="pub-title"><a href="#cats-icml2026-compass">Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents</a></div>
 <div class="pub-authors"><strong>A. Yanagisawa</strong>, G. Kakimoto</div>
 <div class="pub-meta"><span class="pub-venue">CATS Workshop @ ICML 2026</span> <span class="pub-tag">International Workshop, Peer-reviewed</span> <span class="pub-tag">VLM</span> <span class="pub-tag">Continual Adaptation</span> <span class="pub-tag">Finance</span></div>
-<div class="pub-links"><a href="/mysite/blog/compass/">Blog</a> | <a href="https://github.com/AtsushiYanaigsawa768/Compass">Code</a> | <a href="https://huggingface.co/collections/Yana/compass">HuggingFace</a> | <a href="https://cats-icml.github.io/">Workshop</a></div>
+<div class="pub-links"><a href="https://arxiv.org/abs/2610.27904">Paper</a> | <a href="/mysite/blog/compass/">Blog</a> | <a href="https://github.com/AtsushiYanaigsawa768/Compass">Code</a> | <a href="https://huggingface.co/collections/Yana/compass">HuggingFace</a> | <a href="https://cats-icml.github.io/">Workshop</a></div>
 </div>
 
 <div class="pub-entry" id="iscs2026-gp">

@@ -12,8 +12,13 @@ layout: "home"
 <div class="news-list">
 
 <div class="news-item">
+<div class="news-date">2026.09</div>
+<div class="news-text"><span class="news-badge">Paper</span> "On Mitigation of Subliminal Learning in Large Language Models" accepted at Findings of EMNLP 2026 &mdash; <a href="https://arxiv.org/abs/2609.22215">Paper</a></div>
+</div>
+
+<div class="news-item">
 <div class="news-date">2026.05</div>
-<div class="news-text"><span class="news-badge">Paper</span> "Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents" (Compass) accepted at the <a href="https://cats-icml.github.io/">CATS Workshop @ ICML 2026</a> &mdash; <a href="/mysite/blog/compass/">Latest blog post</a></div>
+<div class="news-text"><span class="news-badge">Paper</span> "Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents" (Compass) accepted at the <a href="https://cats-icml.github.io/">CATS Workshop @ ICML 2026</a> &mdash; <a href="https://arxiv.org/abs/2610.27904">Paper</a> | <a href="/mysite/blog/compass/">Latest blog post</a></div>
 </div>
 
 <div class="news-item">

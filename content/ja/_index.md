@@ -12,8 +12,13 @@ layout: "home"
 <div class="news-list">
 
 <div class="news-item">
+<div class="news-date">2026.09</div>
+<div class="news-text"><span class="news-badge">論文</span> "On Mitigation of Subliminal Learning in Large Language Models" がFindings of EMNLP 2026に採択 &mdash; <a href="https://arxiv.org/abs/2609.22215">論文</a></div>
+</div>
+
+<div class="news-item">
 <div class="news-date">2026.05</div>
-<div class="news-text"><span class="news-badge">論文</span> "Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents" (Compass) が <a href="https://cats-icml.github.io/">CATS Workshop @ ICML 2026</a> に採択 &mdash; <a href="/mysite/ja/blog/compass/">最新ブログ記事</a></div>
+<div class="news-text"><span class="news-badge">論文</span> "Staged Continual Adaptation of Multimodal Foundation Models for Japanese Financial Documents" (Compass) が <a href="https://cats-icml.github.io/">CATS Workshop @ ICML 2026</a> に採択 &mdash; <a href="https://arxiv.org/abs/2610.27904">論文</a> | <a href="/mysite/ja/blog/compass/">最新ブログ記事</a></div>
 </div>
 
 <div class="news-item">
